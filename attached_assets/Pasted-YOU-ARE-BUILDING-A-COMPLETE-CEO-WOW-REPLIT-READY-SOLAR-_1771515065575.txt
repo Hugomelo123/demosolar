@@ -1,0 +1,348 @@
+YOU ARE BUILDING A COMPLETE, CEO-WOW, REPLIT-READY SOLAR INSTALLER OPERATIONS PLATFORM FOR LUXEMBOURG.
+
+CRITICAL:
+- Must run immediately in Replit with ZERO configuration.
+- No database. No env vars. No API keys. No external services.
+- All data must be mock/hardcoded and stored in React state (in-memory).
+- Output ALL code files fully complete and ready to run.
+- No TODOs, no placeholders, no missing imports.
+
+GOAL (NOT TO SELL SOFTWARE):
+This is a professional demo to show operational + product skills for Luxembourg solar companies:
+- Quote in 5 minutes (Klimabonus 2026 included)
+- Pipeline visibility (Kanban)
+- Bottleneck alerts (CREOS/quotes/no-contact)
+- Project “Next Action” workflow
+- Installation checklist
+- Professional PDF generator
+
+TECH STACK (MANDATORY):
+- Next.js 14 App Router + TypeScript
+- Tailwind CSS
+- shadcn/ui components (button, card, input, slider, select, badge, alert, progress, switch, textarea, dialog)
+- pdf-lib for PDF generation
+- lucide-react for icons
+- clsx + tailwind-merge
+- @dnd-kit/core + @dnd-kit/sortable + @dnd-kit/utilities for Kanban drag-drop
+
+DESIGN SYSTEM (MUST LOOK PREMIUM):
+- Background gradient: from-green-50 to-blue-50
+- Primary green: #10b981 / #059669
+- Secondary blue: #3b82f6 / #2563eb
+- Warning yellow: #fbbf24
+- Cards: white + rounded-3xl + shadow-2xl + subtle border + backdrop-blur
+- Buttons: h-14, bold text, gradients, hover lift, smooth transitions
+- Inputs: oversized, border-2, clear labels, big spacing
+- Typography: headings 2xl–5xl bold, body lg–xl readable
+- Responsive: mobile-first and clean
+
+APP STRUCTURE (CREATE EXACTLY):
+solarops/
+├── app/
+│   ├── layout.tsx
+│   ├── globals.css
+│   ├── page.tsx
+│   ├── quote/
+│   │   └── page.tsx
+│   ├── projects/
+│   │   └── [id]/
+│   │       └── page.tsx
+│   └── install/
+│       └── [id]/
+│           └── page.tsx
+├── components/
+│   ├── DemoBanner.tsx
+│   ├── Navbar.tsx
+│   ├── StatsCard.tsx
+│   ├── BottleneckAlert.tsx
+│   ├── KanbanBoard.tsx
+│   ├── FollowUpBadges.tsx
+│   ├── NextActionCard.tsx
+│   ├── QuoteForm.tsx
+│   ├── PriceListUpload.tsx
+│   ├── ChecklistSection.tsx
+│   └── Providers.tsx
+├── components/ui/
+│   ├── button.tsx
+│   ├── card.tsx
+│   ├── input.tsx
+│   ├── slider.tsx
+│   ├── select.tsx
+│   ├── badge.tsx
+│   ├── alert.tsx
+│   ├── progress.tsx
+│   ├── switch.tsx
+│   ├── textarea.tsx
+│   └── dialog.tsx
+├── lib/
+│   ├── mockData.ts
+│   ├── calculations.ts
+│   ├── pdf.ts
+│   └── utils.ts
+└── types/
+    └── index.ts
+
+GLOBAL UI REQUIREMENTS (EVERY PAGE):
+- DemoBanner always visible at top:
+  “🚧 DEMO MODE — Data resets daily — Production version connects to your CRM”
+- Navbar sticky top with backdrop blur, gradient logo “SolarOps Luxembourg”
+- Links: Dashboard + “+ New Quote”
+- Right: avatar circle “HM” + label “Hugo M.”
+- Use next/link (no raw <a>)
+
+TYPES (types/index.ts) — EXACT:
+export type ProjectStatus = 'lead'|'visit'|'quote'|'creos'|'installation'|'completed'
+export type NextAction =
+  | 'Call client'
+  | 'Schedule site visit'
+  | 'Send quote PDF'
+  | 'Send CREOS documents'
+  | 'Request deposit'
+  | 'Plan installation date'
+  | 'Close project'
+
+export interface Project {
+  id: string
+  clientName: string
+  address: string
+  kwp: number
+  value: number
+  status: ProjectStatus
+  createdAt: Date
+  daysInStage: number
+  lastContactDaysAgo: number
+  phone: string
+  nextAction: NextAction
+  notes: string[]
+  visitDate?: string
+  assignedTech?: string
+}
+
+export interface QuoteData {
+  address: string
+  roofType: 'pitched'|'flat'|'facade'
+  areaM2: number
+  monthlyBill: number
+  hasBattery: boolean
+  consumptionProfile: 'low'|'normal'|'high'
+  packageType: 'basic'|'premium'
+  kwp: number
+  production: number
+  installCost: number
+  klimabonus: number
+  netCost: number
+  annualSavings: number
+  paybackYears: number
+}
+
+MOCK DATA (lib/mockData.ts):
+- Create 12 realistic Luxembourg solar projects
+- Mix names: Portuguese / French / German / Luxembourgish
+- Communes: Luxembourg City, Esch-sur-Alzette, Dudelange, Differdange, Pétange, Sanem, Hesperange, Bertrange, Strassen, Ettelbruck, Wiltz, Diekirch
+- kWp range: 3.5 to 18.5
+- value range: €8,500 to €35,000
+- createdAt within last 60 days (use Feb 2026 timeframe)
+- status distributed across all columns
+- daysInStage realistic (2–40)
+- lastContactDaysAgo realistic (0–18)
+- phone numbers Luxembourg style +352
+- include nextAction and 2–5 notes per project
+Export: export const initialProjects: Project[] = [...]
+
+CALCULATIONS (lib/calculations.ts) — EXACT RULES:
+- calculateKwp(areaM2): round(areaM2*0.17 to 1 decimal)
+- calculateProduction(kwp): round(kwp*1150)
+- calculateKlimabonus(kwp, hasBattery):
+  if kwp <= 15 => 9300
+  else => 9300 + (kwp-15)*620
+  if hasBattery => +2250
+  round to integer
+- calculateCost(kwp, packageType):
+  basic=2100/kWp, premium=2400/kWp
+- calculateAnnualSavings(monthlyBill, profile):
+  profile multipliers low=0.35 normal=0.45 high=0.55
+  savings = monthlyBill*12*multiplier (round int)
+- calculatePayback(netCost, annualSavings): round((netCost/annualSavings) to 1 decimal)
+Export all functions.
+
+STATE MANAGEMENT (components/Providers.tsx):
+Create a ProjectsProvider using React Context (client component).
+Store projects in state initialized from initialProjects.
+Provide actions:
+- updateProject(id, patch)
+- moveProject(id, status) (also reset daysInStage to 0)
+- addNote(id, note)
+- markContacted(id) (set lastContactDaysAgo=0)
+- setNextAction(id, nextAction)
+Provide a hook useProjects().
+
+LAYOUT (app/layout.tsx):
+- import globals.css
+- wrap children with Providers
+- body has bg-gradient-to-br from-green-50 to-blue-50 min-h-screen
+- include DemoBanner + Navbar sticky
+- content container max-w-7xl mx-auto px-4 md:px-8 py-8
+
+SCREEN 1 — DASHBOARD (app/page.tsx):
+Top metrics: 4 cards grid (StatsCard):
+- New Leads 12 (+3 this week)
+- Quotes Sent 8 (-1)
+- CREOS Approved 2 (+2)
+- Pipeline Value €87,500 (+15%)
+
+Under metrics: BottleneckAlert component (P0 must be strong):
+- List and count:
+  A) CREOS stuck: status=creos and daysInStage>21
+  B) Quote stuck: status=quote and daysInStage>14
+  C) Follow-up needed: lastContactDaysAgo>7
+Each item shows clientName + short address + badge and links to /projects/[id].
+
+Below: KanbanBoard with 6 columns (drag-drop):
+- LEAD (lead)
+- VISIT SCHEDULED (visit)
+- QUOTE SENT (quote)
+- CREOS PENDING (creos)
+- INSTALLATION (installation)
+- COMPLETED (completed)
+
+Card content:
+- clientName
+- short address
+- kwp
+- value €
+- daysInStage badge
+- FollowUpBadges (No contact 10d+, Quote 14d+, CREOS 21d+)
+On click: navigate to /projects/[id].
+When drag-drop changes column: update status in context + reset daysInStage to 0.
+
+SCREEN 2 — QUOTE GENERATOR (app/quote/page.tsx):
+Large heading: “Solar Quote — 5 Minutes”
+Subheading: “Luxembourg Klimabonus 2026 included instantly.”
+
+Form inputs (big, spacious, premium):
+1) Full address input (default example)
+2) Roof type select: pitched/flat/facade
+3) Roof area slider 10–200 m² (live display)
+4) Monthly bill slider €50–€500 (live display)
+5) Battery switch (adds fixed 10kWh)
+6) Consumption profile select:
+   - low daytime use (0.35)
+   - normal family (0.45)
+   - high daytime use (0.55)
+7) Package select:
+   - basic (2100€/kWp)
+   - premium (2400€/kWp)
+8) PriceListUpload component (CSV demo):
+   - button “Upload price list (CSV)”
+   - parse CSV client-side (no libraries)
+   - show “Loaded X items” and a small preview table (first 5 rows)
+   - This is demo-only, does not change calculations
+
+Real-time calculations:
+- kwp, production, installCost, klimabonus, netCost, annualSavings, paybackYears
+Update instantly on slider changes.
+
+WOW results (big cards):
+LEFT card:
+- Address (h2)
+- System X.X kWp
+- Production X,XXX kWh/year
+- Payback X.X years (HUGE green)
+
+RIGHT card:
+- Installation €XX,XXX (crossed, grey)
+- Klimabonus -€X,XXX (green, large)
+- CLIENT PAYS €XX,XXX (HUGE bold)
+
+Buttons:
+- “Generate PDF” (green gradient) -> download PDF (pdf-lib)
+- “Send WhatsApp” (outline) -> open wa.me with a French message including:
+  address, kwp, net cost, and next step “visite technique”
+Warning banner under:
+“⚠️ Connect your Excel price list for final margins, logo and real products.”
+
+PDF (lib/pdf.ts):
+Export: generateQuotePDF(data: QuoteData): Promise<Uint8Array>
+Generate 4 pages:
+1) Cover: “SolarOps Luxembourg Quote”, client address, date, reference ID, subtitle “Klimabonus 2026 included”
+2) Specs table: roof type, area, kwp, panel count=round(kwp*3.7), inverter mock “Huawei SUN2000”, battery if yes, annual production
+3) Financial breakdown:
+   - installation cost (grey crossed)
+   - klimabonus (green)
+   - net cost (BIG)
+   - annual savings, payback
+   - Add: “Valid 14 days”
+   - Add: “Timeline: 6–10 weeks after CREOS approval”
+   - Add: “Payment terms: 30% deposit / 70% after commissioning”
+   - Signature boxes client/installer
+   - QR placeholder: square + text “Scan to approve”
+4) Monthly production chart: draw 12 bars manually (rectangles) with realistic distribution
+Footer on every page: “DEMO MODE — Not a binding offer”
+Use clean typography and spacing.
+
+SCREEN 3 — PROJECT VIEW (app/projects/[id]/page.tsx) (P0, must feel real):
+Show:
+- Header: clientName + full address
+- Status badge + FollowUpBadges
+- Timeline stepper: Lead → Visit → Quote → CREOS → Install → Done (highlight current)
+- NextActionCard big:
+  shows nextAction
+  Buttons:
+   1) “Mark Contacted” => markContacted(id)
+   2) “Advance Stage” => move to next status (lead->visit->quote->creos->installation->completed) and set reasonable nextAction
+   3) “Open Installation Checklist” => /install/[id]
+- Notes section:
+  list notes + textarea to add note => addNote(id)
+- Scheduling block (P1 but implement):
+  button “Schedule site visit”
+  open dialog with date/time + assigned technician (3 mock names)
+  save to project fields visitDate + assignedTech
+- WhatsApp templates:
+  3 buttons that open wa.me:
+   A) Follow-up quote (if quote)
+   B) CREOS waiting (if creos)
+   C) Install scheduled (if installation)
+Each message in French, short, professional.
+
+SCREEN 4 — INSTALLATION CHECKLIST (app/install/[id]/page.tsx):
+Top: project summary.
+3 sections with checkboxes:
+PRE-INSTALLATION:
+□ CREOS grid approval
+□ Building permit
+□ Materials delivered
+□ Client payment
+□ Team scheduled
+DAY-OF:
+□ Safety briefing
+□ Roof inspection
+□ Panel mounting
+□ Inverter install
+□ Electrical connection
+□ System testing
+POST-INSTALLATION:
+□ Site cleanup
+□ Client walkthrough
+□ Monitoring app setup
+□ Documentation
+□ Final photos
+Add progress bar %.
+Button “Complete Installation” shows success alert and subtle animation.
+
+UTILS (lib/utils.ts):
+Implement cn() using clsx + tailwind-merge.
+
+SHADCN UI FILES:
+If shadcn is not initialized, create minimal shadcn-like components under components/ui.
+They must work and be styled well.
+
+PACKAGE.JSON NOTES:
+Ensure dependencies include:
+pdf-lib, lucide-react, clsx, tailwind-merge, class-variance-authority,
+@dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities
+
+FINAL OUTPUT:
+Return ALL FILES with full code content.
+Ensure app compiles with Next.js 14 App Router.
+Ensure all “Date” objects from mockData are handled properly in UI (format nicely).
+Ensure everything is polished, responsive, and CEO-impressive in 30 seconds.
