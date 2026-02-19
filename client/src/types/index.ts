@@ -1,0 +1,44 @@
+export type ProjectStatus = 'lead' | 'visit' | 'quote' | 'creos' | 'installation' | 'completed';
+
+export type NextAction =
+  | 'Call client'
+  | 'Schedule site visit'
+  | 'Send quote PDF'
+  | 'Send CREOS documents'
+  | 'Request deposit'
+  | 'Plan installation date'
+  | 'Close project';
+
+export interface Project {
+  id: string;
+  clientName: string;
+  address: string;
+  kwp: number;
+  value: number;
+  status: ProjectStatus;
+  createdAt: Date;
+  daysInStage: number;
+  lastContactDaysAgo: number;
+  phone: string;
+  nextAction: NextAction;
+  notes: string[];
+  visitDate?: string;
+  assignedTech?: string;
+}
+
+export interface QuoteData {
+  address: string;
+  roofType: 'pitched' | 'flat' | 'facade';
+  areaM2: number;
+  monthlyBill: number;
+  hasBattery: boolean;
+  consumptionProfile: 'low' | 'normal' | 'high';
+  packageType: 'basic' | 'premium';
+  kwp: number;
+  production: number;
+  installCost: number;
+  klimabonus: number;
+  netCost: number;
+  annualSavings: number;
+  paybackYears: number;
+}
