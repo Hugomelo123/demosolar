@@ -39,6 +39,9 @@ export interface QuoteData {
   installCost: number;
   klimabonus: number;
   netCost: number;
+  /** Indicative range: client sees "between X and Y €" (not a fixed quote). */
+  netCostMin: number;
+  netCostMax: number;
   annualSavings: number;
   paybackYears: number;
 }

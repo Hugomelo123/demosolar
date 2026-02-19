@@ -14,6 +14,7 @@ import { Calendar as CalendarIcon, Phone, MapPin, User, MessageSquare } from 'lu
 import { formatDate, formatCurrency } from '@/lib/utils';
 import NotFound from './not-found';
 import { Label } from '@/components/ui/label';
+import { opsCopy } from '@/config/opsCopy';
 
 export default function ProjectDetails() {
   const [match, params] = useRoute('/projects/:id');
@@ -61,7 +62,7 @@ export default function ProjectDetails() {
         </div>
         <div className="text-right">
              <p className="text-2xl font-bold text-emerald-600">{formatCurrency(project.value)}</p>
-             <p className="text-sm text-slate-500">{project.kwp} kWp System</p>
+             <p className="text-sm text-slate-500">{project.kwp} kWp {opsCopy.systemKwp}</p>
         </div>
       </div>
 
@@ -77,7 +78,14 @@ export default function ProjectDetails() {
         {steps.map((step, index) => {
             const isCompleted = index <= currentStepIndex;
             const isCurrent = index === currentStepIndex;
-            
+            const stepLabels: Record<string, string> = {
+              lead: opsCopy.stepLead,
+              visit: opsCopy.stepVisit,
+              quote: opsCopy.stepQuote,
+              creos: opsCopy.stepCreos,
+              installation: opsCopy.stepInstallation,
+              completed: opsCopy.stepCompleted,
+            };
             return (
                 <div key={step} className="flex flex-col items-center gap-2 bg-white/50 backdrop-blur-sm p-1 rounded-xl">
                     <div className={`
@@ -88,7 +96,7 @@ export default function ProjectDetails() {
                         {index + 1}
                     </div>
                     <span className={`text-xs font-medium uppercase ${isCurrent ? 'text-primary font-bold' : 'text-slate-500'}`}>
-                        {step}
+                        {stepLabels[step] ?? step}
                     </span>
                 </div>
             );
@@ -103,7 +111,7 @@ export default function ProjectDetails() {
             <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <MessageSquare className="h-5 w-5 text-slate-500" /> Notes & Activity
+                        <MessageSquare className="h-5 w-5 text-slate-500" /> {opsCopy.notesAndActivity}
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -116,12 +124,12 @@ export default function ProjectDetails() {
                     </div>
                     <div className="flex gap-2">
                         <Textarea 
-                            placeholder="Add a note..." 
+                            placeholder={opsCopy.addNotePlaceholder} 
                             value={noteText}
                             onChange={e => setNoteText(e.target.value)}
                             className="min-h-[80px]"
                         />
-                        <Button onClick={handleAddNote} className="h-auto self-end">Add</Button>
+                        <Button onClick={handleAddNote} className="h-auto self-end">{opsCopy.addNoteButton}</Button>
                     </div>
                 </CardContent>
             </Card>
@@ -131,22 +139,22 @@ export default function ProjectDetails() {
         <div className="space-y-6">
             <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
-                    <CardTitle className="text-lg">Quick Actions</CardTitle>
+                    <CardTitle className="text-lg">{opsCopy.quickActions}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                     <Dialog open={visitOpen} onOpenChange={setVisitOpen}>
                         <DialogTrigger asChild>
                             <Button variant="outline" className="w-full justify-start gap-2 h-12">
-                                <CalendarIcon className="h-4 w-4" /> Schedule Site Visit
+                                <CalendarIcon className="h-4 w-4" /> {opsCopy.scheduleSiteVisit}
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Schedule Site Visit</DialogTitle>
+                                <DialogTitle>{opsCopy.scheduleSiteVisit}</DialogTitle>
                             </DialogHeader>
                             <div className="space-y-4 py-4">
                                 <div className="space-y-2">
-                                    <Label>Date & Time</Label>
+                                    <Label>{opsCopy.dateAndTime}</Label>
                                     <Input 
                                         type="datetime-local" 
                                         value={visitDate} 
@@ -154,9 +162,9 @@ export default function ProjectDetails() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Assigned Technician</Label>
+                                    <Label>{opsCopy.assignedTechnician}</Label>
                                     <Select value={tech} onValueChange={setTech}>
-                                        <SelectTrigger><SelectValue placeholder="Select technician" /></SelectTrigger>
+                                        <SelectTrigger><SelectValue placeholder={opsCopy.selectTechnician} /></SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="Marc Weber">Marc Weber</SelectItem>
                                             <SelectItem value="Jean Dupont">Jean Dupont</SelectItem>
@@ -166,42 +174,42 @@ export default function ProjectDetails() {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button onClick={handleSchedule}>Confirm Booking</Button>
+                                <Button onClick={handleSchedule}>{opsCopy.confirmBooking}</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
 
                     <Button variant="outline" className="w-full justify-start gap-2 h-12" onClick={() => window.open(`tel:${project.phone}`)}>
-                        <Phone className="h-4 w-4" /> Call Client ({project.phone})
+                        <Phone className="h-4 w-4" /> {opsCopy.callClient} ({project.phone})
                     </Button>
                 </CardContent>
             </Card>
 
             <Card className="bg-emerald-50/50 border-emerald-100">
                 <CardHeader>
-                    <CardTitle className="text-lg text-emerald-800">WhatsApp Templates</CardTitle>
+                    <CardTitle className="text-lg text-emerald-800">{opsCopy.whatsappTemplates}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                     <Button 
                         variant="ghost" 
                         className="w-full justify-start text-emerald-700 hover:text-emerald-800 hover:bg-emerald-100 h-auto py-3 text-left whitespace-normal"
-                        onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Bonjour ${project.clientName}, suite à notre devis pour le ${project.address}, avez-vous des questions? Cordialement, SolarOps.`)}`, '_blank')}
+                        onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Bonjour ${project.clientName}, suite à notre devis pour ${project.address}, avez-vous des questions? Cordialement.`)}`, '_blank')}
                     >
-                        <span className="font-bold mr-2">Follow-up:</span> Quote sent check-in
+                        <span className="font-bold mr-2">{opsCopy.followUpLabel}</span> {opsCopy.followUpQuoteCheck}
                     </Button>
                     <Button 
                         variant="ghost" 
                         className="w-full justify-start text-emerald-700 hover:text-emerald-800 hover:bg-emerald-100 h-auto py-3 text-left whitespace-normal"
                         onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Bonjour ${project.clientName}, bonne nouvelle! Votre dossier CREOS est en cours de traitement. On revient vers vous sous 3 semaines.`)}`, '_blank')}
                     >
-                        <span className="font-bold mr-2">Update:</span> CREOS Pending
+                        <span className="font-bold mr-2">{opsCopy.updateLabel}</span> {opsCopy.updateCreosPending}
                     </Button>
                     <Button 
                         variant="ghost" 
                         className="w-full justify-start text-emerald-700 hover:text-emerald-800 hover:bg-emerald-100 h-auto py-3 text-left whitespace-normal"
                         onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Bonjour ${project.clientName}, notre équipe passera le ${formatDate(new Date())} pour l'installation. Merci de libérer l'accès garage.`)}`, '_blank')}
                     >
-                        <span className="font-bold mr-2">Install:</span> Schedule Confirmation
+                        <span className="font-bold mr-2">{opsCopy.installLabel}</span> {opsCopy.installScheduleConfirm}
                     </Button>
                 </CardContent>
             </Card>
@@ -211,9 +219,9 @@ export default function ProjectDetails() {
                     <CardContent className="p-4 flex items-center gap-3">
                         <User className="h-8 w-8 text-blue-500 bg-blue-100 rounded-full p-1" />
                         <div>
-                            <p className="text-xs text-blue-600 font-bold uppercase">Scheduled Visit</p>
+                            <p className="text-xs text-blue-600 font-bold uppercase">{opsCopy.scheduledVisit}</p>
                             <p className="font-bold text-blue-900">{formatDate(project.visitDate)}</p>
-                            <p className="text-xs text-blue-700">Tech: {project.assignedTech}</p>
+                            <p className="text-xs text-blue-700">{opsCopy.tech}: {project.assignedTech}</p>
                         </div>
                     </CardContent>
                  </Card>

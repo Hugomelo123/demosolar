@@ -1,12 +1,21 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Project, ProjectStatus, NextAction } from '../types';
 import { initialProjects } from '../lib/mockData';
-import { subDays } from 'date-fns';
+
+export interface AddProjectData {
+  clientName: string;
+  address: string;
+  kwp: number;
+  value: number;
+  phone?: string;
+  notes?: string[];
+}
 
 interface ProjectsContextType {
   projects: Project[];
   updateProject: (id: string, patch: Partial<Project>) => void;
   moveProject: (id: string, status: ProjectStatus) => void;
+  addProject: (data: AddProjectData) => Project;
   addNote: (id: string, note: string) => void;
   markContacted: (id: string) => void;
   setNextAction: (id: string, nextAction: NextAction) => void;
@@ -49,6 +58,26 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     ));
   };
 
+  const addProject = (data: AddProjectData): Project => {
+    const id = crypto.randomUUID();
+    const newProject: Project = {
+      id,
+      clientName: data.clientName,
+      address: data.address,
+      kwp: data.kwp,
+      value: data.value,
+      status: 'quote',
+      createdAt: new Date(),
+      daysInStage: 0,
+      lastContactDaysAgo: 0,
+      phone: data.phone ?? '',
+      nextAction: 'Send quote PDF',
+      notes: data.notes ?? [],
+    };
+    setProjects(prev => [...prev, newProject]);
+    return newProject;
+  };
+
   const addNote = (id: string, note: string) => {
     setProjects(prev => prev.map(p => 
       p.id === id ? { ...p, notes: [...p.notes, note] } : p
@@ -68,7 +97,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <ProjectsContext.Provider value={{ projects, updateProject, moveProject, addNote, markContacted, setNextAction }}>
+    <ProjectsContext.Provider value={{ projects, updateProject, moveProject, addProject, addNote, markContacted, setNextAction }}>
       {children}
     </ProjectsContext.Provider>
   );

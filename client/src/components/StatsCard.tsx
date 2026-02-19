@@ -6,8 +6,8 @@ import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 interface StatsCardProps {
   title: string;
   value: string;
-  change: string;
-  trend: 'up' | 'down';
+  change?: string;
+  trend?: 'up' | 'down';
   icon?: React.ReactNode;
 }
 
@@ -26,18 +26,20 @@ export function StatsCard({ title, value, change, trend, icon }: StatsCardProps)
             </div>
           )}
         </div>
-        <div className="mt-4 flex items-center gap-2">
-          <div className={cn(
-            "flex items-center text-xs font-bold px-2 py-1 rounded-full",
-            trend === 'up' 
-              ? "bg-emerald-100 text-emerald-700" 
-              : "bg-rose-100 text-rose-700"
-          )}>
-            {trend === 'up' ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
-            {change}
+        {change != null && trend != null && (
+          <div className="mt-4 flex items-center gap-2">
+            <div className={cn(
+              "flex items-center text-xs font-bold px-2 py-1 rounded-full",
+              trend === 'up'
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-rose-100 text-rose-700"
+            )}>
+              {trend === 'up' ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
+              {change}
+            </div>
+            <span className="text-xs text-muted-foreground">vs last week</span>
           </div>
-          <span className="text-xs text-muted-foreground">vs last week</span>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

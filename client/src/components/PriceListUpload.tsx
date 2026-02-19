@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Upload, FileSpreadsheet } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
+import { opsCopy } from '@/config/opsCopy';
 
 // Minimal Table component mock since I didn't create the ui/table file yet
 // Wait, I should probably just use divs for speed if I didn't create table.
@@ -41,7 +42,7 @@ export function PriceListUpload() {
           />
           <Button variant="outline" className="gap-2">
             <Upload className="h-4 w-4" />
-            Upload Price List (CSV)
+            {opsCopy.quotePriceListUpload}
           </Button>
         </div>
         {fileName && <span className="text-sm text-muted-foreground flex items-center gap-1"><FileSpreadsheet className="h-4 w-4" /> {fileName}</span>}
@@ -50,7 +51,7 @@ export function PriceListUpload() {
       {data.length > 0 && (
         <Card className="bg-slate-50 border-dashed border-slate-300">
           <CardContent className="p-4">
-            <p className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">Preview (Top 5 rows)</p>
+            <p className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">{opsCopy.quotePriceListPreview}</p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead>
