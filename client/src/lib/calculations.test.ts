@@ -9,6 +9,9 @@ import {
   calculateNetCost,
   calculateNetCostRange,
   QUOTE_RANGE_MARGIN_PERCENT,
+  getMargin,
+  isMarginBelowMinimum,
+  MIN_MARGIN_PERCENT,
 } from './calculations';
 
 describe('calculateKwp', () => {
@@ -93,5 +96,37 @@ describe('calculateNetCostRange', () => {
 
   it('margin is 12%', () => {
     expect(QUOTE_RANGE_MARGIN_PERCENT).toBe(0.12);
+  });
+});
+
+describe('getMargin', () => {
+  it('returns (price - installCost) / price', () => {
+    expect(getMargin(8000, 10000)).toBe(0.2);
+    expect(getMargin(9500, 10000)).toBe(0.05);
+  });
+
+  it('returns undefined when price <= 0', () => {
+    expect(getMargin(1000, 0)).toBeUndefined();
+    expect(getMargin(1000, -1)).toBeUndefined();
+  });
+});
+
+describe('isMarginBelowMinimum', () => {
+  it('returns true when margin < MIN_MARGIN_PERCENT (5%)', () => {
+    expect(isMarginBelowMinimum(9600, 10000)).toBe(true);  // 4%
+    expect(isMarginBelowMinimum(9500, 10000)).toBe(false); // 5% exact
+    expect(isMarginBelowMinimum(9400, 10000)).toBe(false); // 6%
+  });
+
+  it('returns true when margin is negative', () => {
+    expect(isMarginBelowMinimum(11000, 10000)).toBe(true);
+  });
+
+  it('returns true when price <= 0', () => {
+    expect(isMarginBelowMinimum(1000, 0)).toBe(true);
+  });
+
+  it('MIN_MARGIN_PERCENT is 5%', () => {
+    expect(MIN_MARGIN_PERCENT).toBe(0.05);
   });
 });

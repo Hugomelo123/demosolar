@@ -21,6 +21,14 @@ export const opsCopy = {
   metricCreosPipeline: 'CREOS / Install',
   metricPipelineValue: 'Valeur pipeline',
   pipelineTitle: 'Pipeline — tous les projets',
+  /** Card: next step, owner, due date */
+  cardNextStep: 'Prochaine étape',
+  cardDue: 'Échéance',
+  ownerLabel: 'Responsable',
+  ownerSales: 'Sales',
+  ownerAdmin: 'Admin',
+  ownerTeam: 'Team',
+  dueDateLabel: 'Date limite',
   /** Bottlenecks */
   bottleneckTitle: 'Gargalos — agir avant qu\'ils ne coûtent cher',
   creosDelayTitle: 'CREOS: dossier bloqué',
@@ -80,6 +88,8 @@ export const opsCopy = {
   quoteInstallationCost: "Coût d'installation",
   quoteEstimatedNetCost: 'Coût net estimé (fourchette)',
   quoteIndicativeBand: 'Bande indicative — offre ferme après visite.',
+  quoteMarginAlertTitle: 'Marges faibles',
+  quoteMarginAlertDesc: 'En bas de fourchette, la marge est inférieure au minimum conseillé. Vérifiez les coûts ou proposez plus haut dans la bande.',
   quoteAddToPipeline: 'Ajouter au pipeline',
   quoteGeneratePDF: 'Générer le PDF',
   quoteGenerating: 'Génération…',

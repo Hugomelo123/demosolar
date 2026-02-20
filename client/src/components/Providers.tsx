@@ -9,6 +9,8 @@ export interface AddProjectData {
   value: number;
   phone?: string;
   notes?: string[];
+  owner?: 'Sales' | 'Admin' | 'Team';
+  dueDate?: string;
 }
 
 interface ProjectsContextType {
@@ -73,6 +75,8 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       phone: data.phone ?? '',
       nextAction: 'Send quote PDF',
       notes: data.notes ?? [],
+      owner: data.owner ?? 'Sales',
+      dueDate: data.dueDate,
     };
     setProjects(prev => [...prev, newProject]);
     return newProject;

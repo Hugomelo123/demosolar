@@ -3,13 +3,15 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, u
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Project, ProjectStatus } from '@/types';
 import { useProjects } from './Providers';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { FollowUpBadges } from './FollowUpBadges';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { Link } from 'wouter';
+import { nextActionToLabel } from './NextActionCard';
+import { opsCopy } from '@/config/opsCopy';
 
 const COLUMNS: { id: ProjectStatus; title: string; color: string }[] = [
   { id: 'lead', title: 'Lead', color: 'bg-slate-100' },
@@ -42,9 +44,20 @@ function DraggableProjectCard({ project }: { project: Project }) {
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground mb-2 truncate">{project.address}</p>
-            <div className="flex justify-between items-center text-xs font-medium text-slate-700">
+            <div className="flex justify-between items-center text-xs font-medium text-slate-700 mb-1">
               <span>{project.kwp} kWp</span>
               <span>{formatCurrency(project.value)}</span>
+            </div>
+            <p className="text-[10px] text-primary font-medium truncate" title={nextActionToLabel[project.nextAction]}>
+              {opsCopy.cardNextStep}: {nextActionToLabel[project.nextAction]}
+            </p>
+            <div className="flex flex-wrap gap-x-2 gap-y-0.5 mt-1 text-[10px] text-slate-500">
+              {project.owner && (
+                <span className="font-medium">{project.owner === 'Sales' ? opsCopy.ownerSales : project.owner === 'Admin' ? opsCopy.ownerAdmin : opsCopy.ownerTeam}</span>
+              )}
+              {project.dueDate && (
+                <span>• {formatDate(project.dueDate)}</span>
+              )}
             </div>
             <FollowUpBadges project={project} />
           </CardContent>
@@ -124,6 +137,12 @@ export function KanbanBoard() {
              <CardContent className="p-3">
                <h4 className="font-bold text-sm">{activeProject.clientName}</h4>
                <p className="text-xs text-muted-foreground">{activeProject.address}</p>
+               <p className="text-[10px] text-primary font-medium mt-1">{nextActionToLabel[activeProject.nextAction]}</p>
+               {(activeProject.owner || activeProject.dueDate) && (
+                 <p className="text-[10px] text-slate-500 mt-0.5">
+                   {activeProject.owner}{activeProject.dueDate ? ` • ${formatDate(activeProject.dueDate)}` : ''}
+                 </p>
+               )}
              </CardContent>
            </Card>
         ) : null}

@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Button } from './ui/button';
 import { PriceListUpload } from './PriceListUpload';
 import { QuoteData } from '@/types';
-import { calculateKwp, calculateProduction, calculateKlimabonus, calculateCost, calculateAnnualSavings, calculatePayback, calculateNetCost, calculateNetCostRange } from '@/lib/calculations';
+import { calculateKwp, calculateProduction, calculateKlimabonus, calculateCost, calculateAnnualSavings, calculatePayback, calculateNetCost, calculateNetCostRange, isMarginBelowMinimum, MIN_MARGIN_PERCENT } from '@/lib/calculations';
 import { generateQuotePDF } from '@/lib/pdf';
 import { FileText, Send, Zap, Sun, Wallet, Battery, PlusCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
@@ -288,6 +288,15 @@ export function QuoteForm() {
                         </span>
                     </div>
                 </div>
+
+                {isMarginBelowMinimum(data.installCost, data.netCostMin) && (
+                    <Alert className="bg-amber-50 border-amber-300 text-amber-900">
+                        <AlertTitle className="font-bold">{opsCopy.quoteMarginAlertTitle}</AlertTitle>
+                        <AlertDescription>
+                            {opsCopy.quoteMarginAlertDesc} (marge min. {Math.round(MIN_MARGIN_PERCENT * 100)} %)
+                        </AlertDescription>
+                    </Alert>
+                )}
                 
                 <div className="pt-4 space-y-3">
                     <Button 

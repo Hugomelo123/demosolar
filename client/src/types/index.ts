@@ -9,6 +9,8 @@ export type NextAction =
   | 'Plan installation date'
   | 'Close project';
 
+export type ProjectOwner = 'Sales' | 'Admin' | 'Team';
+
 export interface Project {
   id: string;
   clientName: string;
@@ -24,6 +26,10 @@ export interface Project {
   notes: string[];
   visitDate?: string;
   assignedTech?: string;
+  /** Who owns this project (Sales / Admin / Team) */
+  owner?: ProjectOwner;
+  /** Due date for next step (ISO string) */
+  dueDate?: string;
 }
 
 export interface QuoteData {

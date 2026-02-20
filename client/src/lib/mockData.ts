@@ -1,5 +1,5 @@
 import { Project } from "../types";
-import { subDays } from "date-fns";
+import { subDays, addDays } from "date-fns";
 
 export const initialProjects: Project[] = [
   {
@@ -15,6 +15,8 @@ export const initialProjects: Project[] = [
     phone: "+352 691 123 456",
     nextAction: "Send quote PDF",
     notes: ["Interested in battery storage", "Roof faces South-West"],
+    owner: "Sales",
+    dueDate: addDays(new Date(), 5).toISOString().slice(0, 10),
   },
   {
     id: "2",
@@ -29,6 +31,8 @@ export const initialProjects: Project[] = [
     phone: "+352 621 987 654",
     nextAction: "Send CREOS documents",
     notes: ["Waiting for CREOS approval", "Need to double check inverter stock"],
+    owner: "Admin",
+    dueDate: addDays(new Date(), 3).toISOString().slice(0, 10),
   },
   {
     id: "3",
@@ -43,6 +47,8 @@ export const initialProjects: Project[] = [
     phone: "+352 661 555 123",
     nextAction: "Call client",
     notes: ["Lead from website", "Asking about Klimabonus"],
+    owner: "Sales",
+    dueDate: addDays(new Date(), 2).toISOString().slice(0, 10),
   },
   {
     id: "4",
@@ -57,6 +63,8 @@ export const initialProjects: Project[] = [
     phone: "+352 691 444 777",
     nextAction: "Schedule site visit",
     notes: ["Large roof area", "Prefers black panels"],
+    owner: "Team",
+    dueDate: addDays(new Date(), 7).toISOString().slice(0, 10),
   },
   {
     id: "5",
@@ -71,6 +79,8 @@ export const initialProjects: Project[] = [
     phone: "+352 621 222 333",
     nextAction: "Plan installation date",
     notes: ["Installation scheduled for next week", "Scaffolding required"],
+    owner: "Team",
+    dueDate: addDays(new Date(), 1).toISOString().slice(0, 10),
   },
   {
     id: "6",
@@ -85,6 +95,7 @@ export const initialProjects: Project[] = [
     phone: "+352 661 888 999",
     nextAction: "Close project",
     notes: ["Project completed successfully", "Client very happy"],
+    owner: "Admin",
   },
   {
     id: "7",
@@ -99,6 +110,8 @@ export const initialProjects: Project[] = [
     phone: "+352 691 111 222",
     nextAction: "Call client",
     notes: ["Sent quote via email", "No response yet"],
+    owner: "Sales",
+    dueDate: addDays(new Date(), 4).toISOString().slice(0, 10),
   },
   {
     id: "8",
@@ -113,6 +126,8 @@ export const initialProjects: Project[] = [
     phone: "+352 621 333 444",
     nextAction: "Call client",
     notes: ["Referral from Jean-Pierre", "Has an electric car"],
+    owner: "Sales",
+    dueDate: addDays(new Date(), 3).toISOString().slice(0, 10),
   },
   {
     id: "9",
@@ -127,6 +142,8 @@ export const initialProjects: Project[] = [
     phone: "+352 661 666 777",
     nextAction: "Schedule site visit",
     notes: ["Difficult access to roof", "Needs detailed measurement"],
+    owner: "Team",
+    dueDate: addDays(new Date(), 10).toISOString().slice(0, 10),
   },
   {
     id: "10",
@@ -141,6 +158,8 @@ export const initialProjects: Project[] = [
     phone: "+352 691 999 000",
     nextAction: "Send CREOS documents",
     notes: ["Submitted to CREOS", "Waiting for meter change"],
+    owner: "Admin",
+    dueDate: addDays(new Date(), 14).toISOString().slice(0, 10),
   },
   {
     id: "11",
@@ -155,6 +174,8 @@ export const initialProjects: Project[] = [
     phone: "+352 621 000 111",
     nextAction: "Plan installation date",
     notes: ["Panels delivered", "Waiting for inverter"],
+    owner: "Team",
+    dueDate: addDays(new Date(), 2).toISOString().slice(0, 10),
   },
   {
     id: "12",
@@ -169,5 +190,7 @@ export const initialProjects: Project[] = [
     phone: "+352 661 222 555",
     nextAction: "Request deposit",
     notes: ["Quote approved verbally", "Need signed contract"],
+    owner: "Sales",
+    dueDate: addDays(new Date(), 7).toISOString().slice(0, 10),
   },
 ];

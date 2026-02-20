@@ -11,7 +11,7 @@ interface NextActionCardProps {
   project: Project;
 }
 
-const nextActionToLabel: Record<NextAction, string> = {
+export const nextActionToLabel: Record<NextAction, string> = {
   'Call client': 'Appeler le client',
   'Schedule site visit': 'Planifier visite',
   'Send quote PDF': 'Envoyer devis PDF',

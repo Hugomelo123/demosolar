@@ -15,6 +15,7 @@ import { formatDate, formatCurrency } from '@/lib/utils';
 import NotFound from './not-found';
 import { Label } from '@/components/ui/label';
 import { opsCopy } from '@/config/opsCopy';
+import type { ProjectOwner } from '@/types';
 
 export default function ProjectDetails() {
   const [match, params] = useRoute('/projects/:id');
@@ -137,6 +138,36 @@ export default function ProjectDetails() {
 
         {/* Right Column */}
         <div className="space-y-6">
+            <Card className="bg-white/80 backdrop-blur-sm">
+                <CardHeader>
+                    <CardTitle className="text-lg">{opsCopy.ownerLabel} & {opsCopy.cardDue}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                        <Label>{opsCopy.ownerLabel}</Label>
+                        <Select
+                            value={project.owner ?? 'Sales'}
+                            onValueChange={(v: ProjectOwner) => updateProject(project.id, { owner: v })}
+                        >
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Sales">{opsCopy.ownerSales}</SelectItem>
+                                <SelectItem value="Admin">{opsCopy.ownerAdmin}</SelectItem>
+                                <SelectItem value="Team">{opsCopy.ownerTeam}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>{opsCopy.dueDateLabel}</Label>
+                        <Input
+                            type="date"
+                            value={project.dueDate ? project.dueDate.slice(0, 10) : ''}
+                            onChange={e => updateProject(project.id, { dueDate: e.target.value ? e.target.value : undefined })}
+                        />
+                    </div>
+                </CardContent>
+            </Card>
+
             <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle className="text-lg">{opsCopy.quickActions}</CardTitle>

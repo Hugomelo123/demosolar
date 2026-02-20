@@ -54,6 +54,22 @@ export function calculateNetCost(installCost: number, klimabonus: number): numbe
 /** Quote range: from base net cost up to +margin% (company can quote within band, not a fixed price). */
 export const QUOTE_RANGE_MARGIN_PERCENT = 0.12; // e.g. 12% = range from X to X×1.12
 
+/** Minimum acceptable margin (company revenue vs install cost). Below this, show a guardrail alert. */
+export const MIN_MARGIN_PERCENT = 0.05; // 5%
+
+/** Margin = (price - installCost) / price. Returns undefined if price <= 0. */
+export function getMargin(installCost: number, price: number): number | undefined {
+  if (price <= 0) return undefined;
+  return (price - installCost) / price;
+}
+
+/** True when margin at the given price is below MIN_MARGIN_PERCENT (or negative). */
+export function isMarginBelowMinimum(installCost: number, price: number): boolean {
+  const margin = getMargin(installCost, price);
+  if (margin === undefined) return true;
+  return margin < MIN_MARGIN_PERCENT;
+}
+
 export function calculateNetCostRange(netCost: number): { min: number; max: number; mid: number } {
   const min = Math.round(netCost);
   const max = Math.round(netCost * (1 + QUOTE_RANGE_MARGIN_PERCENT));
