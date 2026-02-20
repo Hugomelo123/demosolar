@@ -23,7 +23,6 @@ runButton = "Project"
 [[workflows.workflow]]
 name = "Project"
 mode = "parallel"
-author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
@@ -31,13 +30,8 @@ args = "Start application"
 
 [[workflows.workflow]]
 name = "Start application"
-author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev:client"
 waitForPort = 5000
-
-[agent]
-stack = "MOCKUP_JS"
-mockupState = "MOCKUP"

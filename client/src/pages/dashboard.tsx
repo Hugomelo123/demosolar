@@ -15,6 +15,11 @@ export default function Dashboard() {
   const creosOrLater = projects.filter(p => p.status === 'creos' || p.status === 'installation' || p.status === 'completed').length;
   const pipelineValue = projects.reduce((acc, p) => acc + p.value, 0);
 
+  const inPipeline = projects.filter(p => p.status !== 'completed');
+  const valueInPipeline = inPipeline.reduce((acc, p) => acc + p.value, 0);
+  const valueStuck14 = inPipeline.filter(p => p.daysInStage >= 14).reduce((acc, p) => acc + p.value, 0);
+  const noContactCount = inPipeline.filter(p => (p.lastContactDaysAgo ?? 0) >= 14).length;
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* 30-second value: control panel + funnel */}
@@ -59,6 +64,19 @@ export default function Dashboard() {
       </div>
 
       <div className="space-y-4">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl bg-slate-100/80 border border-slate-200 px-4 py-3 text-sm">
+          <span className="font-semibold text-slate-700">
+            💰 {opsCopy.summaryInPipeline(formatCurrency(valueInPipeline))}
+          </span>
+          <span className="text-slate-600">
+            ⏳ {opsCopy.summaryStuck14(formatCurrency(valueStuck14))}
+          </span>
+          {noContactCount > 0 && (
+            <span className="text-amber-700 font-medium">
+              ⚠ {opsCopy.summaryNoContact(noContactCount)}
+            </span>
+          )}
+        </div>
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-slate-800">{opsCopy.pipelineTitle}</h2>
         </div>

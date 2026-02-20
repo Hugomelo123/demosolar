@@ -21,6 +21,10 @@ export const opsCopy = {
   metricCreosPipeline: 'CREOS / Install',
   metricPipelineValue: 'Valeur pipeline',
   pipelineTitle: 'Pipeline — tous les projets',
+  /** Mini summary above pipeline */
+  summaryInPipeline: (value: string) => `${value} en pipeline`,
+  summaryStuck14: (value: string) => `${value} bloqués depuis +14 jours`,
+  summaryNoContact: (n: number) => n === 1 ? '1 projet sans contact' : `${n} projets sans contact`,
   /** Card: next step, owner, due date */
   cardNextStep: 'Prochaine étape',
   cardDue: 'Échéance',
