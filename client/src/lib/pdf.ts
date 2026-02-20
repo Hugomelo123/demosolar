@@ -37,6 +37,7 @@ export async function generateQuotePDF(data: QuoteData): Promise<Uint8Array> {
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
   const green = rgb(0.11, 0.45, 0.28);
+  const greenLight = rgb(0.85, 0.95, 0.88);
   const greenText = rgb(0.1, 0.55, 0.35);
   const gray = rgb(0.35, 0.35, 0.35);
   const grayLight = rgb(0.55, 0.55, 0.55);
@@ -52,8 +53,8 @@ export async function generateQuotePDF(data: QuoteData): Promise<Uint8Array> {
   const h = page.getHeight();
   let y = h - MARGIN;
 
-  // —— Header block (full width) ——
-  const headerH = 52;
+  // —— Header (barre verte + ligne d'accent) ——
+  const headerH = 56;
   page.drawRectangle({
     x: 0,
     y: h - headerH,
@@ -61,68 +62,82 @@ export async function generateQuotePDF(data: QuoteData): Promise<Uint8Array> {
     height: headerH,
     color: green,
   });
+  page.drawRectangle({
+    x: 0,
+    y: h - headerH - 2,
+    width: w,
+    height: 2,
+    color: rgb(0.15, 0.55, 0.35),
+  });
   page.drawText(pdfSafe(opsCopy.companyName), {
     x: MARGIN,
-    y: h - headerH + 18,
-    size: 18,
+    y: h - headerH + 22,
+    size: 20,
     font: fontBold,
     color: white,
   });
-  page.drawText(pdfSafe('DEVIS INSTALLATION PHOTOVOLTAIQUE'), {
+  page.drawText(pdfSafe('Devis installation photovoltaïque'), {
     x: MARGIN,
-    y: h - headerH + 4,
+    y: h - headerH + 6,
     size: 10,
     font: font,
-    color: rgb(0.85, 0.95, 0.88),
+    color: greenLight,
   });
-  y = h - headerH - 28;
+  y = h - headerH - 32;
 
-  // —— Client & ref block (bordered) ——
-  const boxY = y - 58;
+  // —— Bloc destinataire & référence ——
+  const boxY = y - 60;
   page.drawRectangle({
     x: MARGIN,
     y: boxY,
     width: CONTENT_W,
-    height: 62,
-    borderColor: rgb(0.88, 0.88, 0.88),
+    height: 64,
+    borderColor: rgb(0.9, 0.9, 0.9),
     borderWidth: 1,
   });
-  page.drawText(pdfSafe('Destinataire'), { x: MARGIN + 12, y: boxY + 42, size: 8, font: font, color: grayLight });
-  page.drawText(pdfSafe(data.address), { x: MARGIN + 12, y: boxY + 26, size: 11, font: fontBold, color: dark });
-  page.drawText(pdfSafe(`Date: ${dateStr}`), { x: MARGIN + 12, y: boxY + 10, size: 9, font: font, color: gray });
-  page.drawText(pdfSafe(`Reference: ${ref}`), {
-    x: MARGIN + CONTENT_W - 140,
-    y: boxY + 26,
-    size: 11,
+  page.drawRectangle({
+    x: MARGIN,
+    y: boxY,
+    width: 4,
+    height: 64,
+    color: green,
+  });
+  page.drawText(pdfSafe('Destinataire'), { x: MARGIN + 16, y: boxY + 44, size: 8, font: font, color: grayLight });
+  page.drawText(pdfSafe(data.address), { x: MARGIN + 16, y: boxY + 28, size: 11, font: fontBold, color: dark });
+  page.drawText(pdfSafe(`Date : ${dateStr}`), { x: MARGIN + 16, y: boxY + 12, size: 9, font: font, color: gray });
+  page.drawText(pdfSafe(`Réf. ${ref}`), {
+    x: MARGIN + CONTENT_W - 120,
+    y: boxY + 32,
+    size: 12,
     font: fontBold,
     color: greenText,
   });
   page.drawText(pdfSafe('Klimabonus 2026 inclus'), {
-    x: MARGIN + CONTENT_W - 140,
-    y: boxY + 10,
+    x: MARGIN + CONTENT_W - 120,
+    y: boxY + 14,
     size: 8,
     font: font,
     color: grayLight,
   });
-  y = boxY - 32;
+  y = boxY - 36;
 
-  // —— Section 1: Caracteristiques ——
-  page.drawText(pdfSafe('1. Caracteristiques du projet'), {
+  // —— Section 1 : Caractéristiques ——
+  page.drawText(pdfSafe('1. Caractéristiques du projet'), {
     x: MARGIN,
     y,
-    size: 13,
+    size: 14,
     font: fontBold,
     color: dark,
   });
-  y -= 6;
+  y -= 8;
   page.drawRectangle({
     x: MARGIN,
     y: y,
-    width: 80,
-    height: 2,
+    width: 100,
+    height: 3,
     color: green,
   });
-  y -= 22;
+  y -= 24;
 
   const specs: [string, string][] = [
     [pdfSafe('Type de toit'), data.roofType === 'pitched' ? 'Incline' : data.roofType === 'flat' ? 'Plat' : 'Facade'],
@@ -138,23 +153,23 @@ export async function generateQuotePDF(data: QuoteData): Promise<Uint8Array> {
   });
   y -= 28;
 
-  // —— Section 2: Montant indicatif ——
+  // —— Section 2 : Montant indicatif ——
   page.drawText(pdfSafe('2. Montant indicatif'), {
     x: MARGIN,
     y,
-    size: 13,
+    size: 14,
     font: fontBold,
     color: dark,
   });
-  y -= 6;
+  y -= 8;
   page.drawRectangle({
     x: MARGIN,
     y: y,
-    width: 60,
-    height: 2,
+    width: 90,
+    height: 3,
     color: green,
   });
-  y -= 22;
+  y -= 24;
 
   drawTableRow(
     page,
@@ -177,37 +192,45 @@ export async function generateQuotePDF(data: QuoteData): Promise<Uint8Array> {
 
   const minC = data.netCostMin ?? data.netCost;
   const maxC = data.netCostMax ?? data.netCost;
-  const netStr = `${minC.toLocaleString('fr')} - ${maxC.toLocaleString('fr')} EUR`;
+  const netStr = `${minC.toLocaleString('fr')} – ${maxC.toLocaleString('fr')} EUR`;
+  const netBoxH = 34;
   page.drawRectangle({
     x: MARGIN,
-    y: y - 6,
+    y: y - 8,
     width: CONTENT_W,
-    height: 28,
+    height: netBoxH,
     color: rgb(0.94, 0.98, 0.95),
   });
   page.drawRectangle({
     x: MARGIN,
-    y: y - 6,
+    y: y - 8,
+    width: 4,
+    height: netBoxH,
+    color: green,
+  });
+  page.drawRectangle({
+    x: MARGIN,
+    y: y - 8,
     width: CONTENT_W,
-    height: 28,
-    borderColor: greenText,
+    height: netBoxH,
+    borderColor: rgb(0.85, 0.92, 0.88),
     borderWidth: 1,
   });
   page.drawText(pdfSafe('Coût net estimé (fourchette)'), {
-    x: MARGIN + 12,
-    y: y + 2,
+    x: MARGIN + 14,
+    y: y + 4,
     size: 11,
     font: fontBold,
     color: dark,
   });
   page.drawText(pdfSafe(netStr), {
-    x: MARGIN + CONTENT_W - 130,
+    x: MARGIN + CONTENT_W - 135,
     y: y + 2,
-    size: 14,
+    size: 15,
     font: fontBold,
     color: greenText,
   });
-  y -= 40;
+  y -= 44;
 
   page.drawText(pdfSafe('Offre ferme après visite technique sur site.'), {
     x: MARGIN,
@@ -269,23 +292,31 @@ export async function generateQuotePDF(data: QuoteData): Promise<Uint8Array> {
   });
 
   // —— Footer ——
+  const footerH = 32;
   page.drawRectangle({
     x: 0,
     y: 0,
     width: w,
-    height: 28,
-    color: rgb(0.97, 0.97, 0.97),
+    height: 1,
+    color: rgb(0.9, 0.9, 0.9),
   });
-  page.drawText(pdfSafe(`${ref} - ${opsCopy.companyName}`), {
+  page.drawRectangle({
+    x: 0,
+    y: 0,
+    width: w,
+    height: footerH,
+    color: rgb(0.98, 0.98, 0.98),
+  });
+  page.drawText(pdfSafe(`${ref} · ${opsCopy.companyName}`), {
     x: MARGIN,
-    y: 8,
-    size: 8,
+    y: 10,
+    size: 9,
     font: font,
-    color: grayLight,
+    color: gray,
   });
-  page.drawText(pdfSafe("Document indicatif. Offre ferme après visite."), {
-    x: w - MARGIN - 200,
-    y: 8,
+  page.drawText(pdfSafe('Document indicatif. Offre ferme après visite technique.'), {
+    x: w - MARGIN - 240,
+    y: 10,
     size: 8,
     font: font,
     color: grayLight,

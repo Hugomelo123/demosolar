@@ -122,109 +122,170 @@ export function QuoteForm() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-12">
+      {/* Live summary strip — visible when we have data */}
+      {data.kwp > 0 && (
+        <div className="lg:col-span-12 flex flex-wrap items-center gap-6 rounded-xl bg-slate-100/90 border border-slate-200/80 px-5 py-4 text-sm">
+          <div className="flex items-baseline gap-2">
+            <span className="text-slate-500 font-medium">Puissance</span>
+            <span className="text-xl font-bold text-slate-800">{data.kwp} kWp</span>
+          </div>
+          <div className="h-4 w-px bg-slate-300" />
+          <div className="flex items-baseline gap-2">
+            <span className="text-slate-500 font-medium">Coût net indicatif</span>
+            <span className="text-xl font-bold text-emerald-700">
+              {data.netCostMin.toLocaleString('fr')} – {data.netCostMax.toLocaleString('fr')} €
+            </span>
+          </div>
+          <div className="h-4 w-px bg-slate-300" />
+          <div className="flex items-baseline gap-2">
+            <span className="text-slate-500 font-medium">Retour sur invest.</span>
+            <span className="text-xl font-bold text-slate-800">{data.paybackYears} ans</span>
+          </div>
+        </div>
+      )}
+
       {/* LEFT COLUMN - INPUTS */}
       <div className="lg:col-span-7 space-y-6">
-        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-md">
-          <CardHeader>
-            <CardTitle>{opsCopy.quoteProjectDetails}</CardTitle>
+        <Card className="border border-slate-200/80 shadow-md bg-white">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg">{opsCopy.quoteProjectDetails}</CardTitle>
             <CardDescription>{opsCopy.quoteProjectDetailsDesc}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-                <Label>{opsCopy.quoteClientName}</Label>
-                <Input 
-                    value={clientName} 
-                    onChange={e => setClientName(e.target.value)} 
+          <CardContent className="space-y-8">
+            {/* Section: Client */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                <span className="h-px flex-1 bg-slate-200" />
+                {opsCopy.quoteSectionClient}
+                <span className="h-px flex-1 bg-slate-200" />
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-1">
+                <div className="space-y-2">
+                  <Label>{opsCopy.quoteClientName}</Label>
+                  <Input
+                    value={clientName}
+                    onChange={e => setClientName(e.target.value)}
                     placeholder={opsCopy.quoteClientPlaceholder}
-                />
-            </div>
-            <div className="space-y-2">
-                <Label>{opsCopy.quoteFullAddress}</Label>
-                <Input 
-                    value={data.address} 
-                    onChange={e => setData({...data, address: e.target.value})} 
+                    className="bg-slate-50/80"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{opsCopy.quoteFullAddress}</Label>
+                  <Input
+                    value={data.address}
+                    onChange={e => setData({ ...data, address: e.target.value })}
                     placeholder={opsCopy.quoteAddressPlaceholder}
-                />
+                    className="bg-slate-50/80"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label>{opsCopy.quoteRoofType}</Label>
-                    <Select value={data.roofType} onValueChange={(v: QuoteData['roofType']) => setData({...data, roofType: v})}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="pitched">{opsCopy.quoteRoofPitched}</SelectItem>
-                            <SelectItem value="flat">{opsCopy.quoteRoofFlat}</SelectItem>
-                            <SelectItem value="facade">{opsCopy.quoteRoofFacade}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="space-y-2">
-                    <Label>{opsCopy.quotePackage}</Label>
-                    <Select value={data.packageType} onValueChange={(v: QuoteData['packageType']) => setData({...data, packageType: v})}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="basic">{opsCopy.quotePackageBasic}</SelectItem>
-                            <SelectItem value="premium">{opsCopy.quotePackagePremium}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
-
+            {/* Section: Installation */}
             <div className="space-y-4">
-                <div className="flex justify-between">
-                    <Label>{opsCopy.quoteRoofArea}</Label>
-                    <span className="font-bold text-primary">{data.areaM2} m²</span>
-                </div>
-                <Slider 
-                    value={[data.areaM2]} 
-                    min={10} max={200} step={1} 
-                    onValueChange={([v]) => setData({...data, areaM2: v})} 
-                />
-            </div>
-
-            <div className="space-y-4">
-                <div className="flex justify-between">
-                    <Label>{opsCopy.quoteMonthlyBill}</Label>
-                    <span className="font-bold text-primary">{data.monthlyBill} €</span>
-                </div>
-                <Slider 
-                    value={[data.monthlyBill]} 
-                    min={50} max={500} step={10} 
-                    onValueChange={([v]) => setData({...data, monthlyBill: v})} 
-                />
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
-                <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-                        <Battery className="h-5 w-5" />
-                    </div>
-                    <div>
-                        <Label className="text-base cursor-pointer">{opsCopy.quoteAddBattery}</Label>
-                        <p className="text-xs text-muted-foreground">{opsCopy.quoteBatteryBonus}</p>
-                    </div>
-                </div>
-                <Switch 
-                    checked={data.hasBattery} 
-                    onCheckedChange={c => setData({...data, hasBattery: c})} 
-                />
-            </div>
-
-            <div className="space-y-2">
-                <Label>{opsCopy.quoteConsumptionProfile}</Label>
-                <Select value={data.consumptionProfile} onValueChange={(v: QuoteData['consumptionProfile']) => setData({...data, consumptionProfile: v})}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                <span className="h-px flex-1 bg-slate-200" />
+                {opsCopy.quoteSectionInstall}
+                <span className="h-px flex-1 bg-slate-200" />
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>{opsCopy.quoteRoofType}</Label>
+                  <Select value={data.roofType} onValueChange={(v: QuoteData['roofType']) => setData({ ...data, roofType: v })}>
+                    <SelectTrigger className="bg-slate-50/80"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="low">{opsCopy.quoteConsumptionLow}</SelectItem>
-                        <SelectItem value="normal">{opsCopy.quoteConsumptionNormal}</SelectItem>
-                        <SelectItem value="high">{opsCopy.quoteConsumptionHigh}</SelectItem>
+                      <SelectItem value="pitched">{opsCopy.quoteRoofPitched}</SelectItem>
+                      <SelectItem value="flat">{opsCopy.quoteRoofFlat}</SelectItem>
+                      <SelectItem value="facade">{opsCopy.quoteRoofFacade}</SelectItem>
                     </SelectContent>
-                </Select>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>{opsCopy.quotePackage}</Label>
+                  <Select value={data.packageType} onValueChange={(v: QuoteData['packageType']) => setData({ ...data, packageType: v })}>
+                    <SelectTrigger className="bg-slate-50/80"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="basic">{opsCopy.quotePackageBasic}</SelectItem>
+                      <SelectItem value="premium">{opsCopy.quotePackagePremium}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <Label>{opsCopy.quoteRoofArea}</Label>
+                  <span className="font-semibold text-emerald-700">{data.areaM2} m²</span>
+                </div>
+                <div className="flex justify-between text-xs text-slate-400 px-0.5">
+                  <span>10 m²</span>
+                  <span>200 m²</span>
+                </div>
+                <Slider
+                  value={[data.areaM2]}
+                  min={10}
+                  max={200}
+                  step={1}
+                  onValueChange={([v]) => setData({ ...data, areaM2: v })}
+                  className="py-2"
+                />
+              </div>
+              <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-slate-50 to-emerald-50/50 border border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700">
+                    <Battery className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <Label className="text-base font-medium cursor-pointer">{opsCopy.quoteAddBattery}</Label>
+                    <p className="text-xs text-muted-foreground">{opsCopy.quoteBatteryBonus}</p>
+                  </div>
+                </div>
+                <Switch
+                  checked={data.hasBattery}
+                  onCheckedChange={c => setData({ ...data, hasBattery: c })}
+                />
+              </div>
             </div>
-            
-            <div className="pt-4 border-t border-slate-100">
-                <PriceListUpload />
+
+            {/* Section: Consommation */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                <span className="h-px flex-1 bg-slate-200" />
+                {opsCopy.quoteSectionConsumption}
+                <span className="h-px flex-1 bg-slate-200" />
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <Label>{opsCopy.quoteMonthlyBill}</Label>
+                  <span className="font-semibold text-emerald-700">{data.monthlyBill} €</span>
+                </div>
+                <div className="flex justify-between text-xs text-slate-400 px-0.5">
+                  <span>50 €</span>
+                  <span>500 €</span>
+                </div>
+                <Slider
+                  value={[data.monthlyBill]}
+                  min={50}
+                  max={500}
+                  step={10}
+                  onValueChange={([v]) => setData({ ...data, monthlyBill: v })}
+                  className="py-2"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{opsCopy.quoteConsumptionProfile}</Label>
+                <Select value={data.consumptionProfile} onValueChange={(v: QuoteData['consumptionProfile']) => setData({ ...data, consumptionProfile: v })}>
+                  <SelectTrigger className="bg-slate-50/80"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">{opsCopy.quoteConsumptionLow}</SelectItem>
+                    <SelectItem value="normal">{opsCopy.quoteConsumptionNormal}</SelectItem>
+                    <SelectItem value="high">{opsCopy.quoteConsumptionHigh}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-slate-200">
+              <PriceListUpload />
             </div>
           </CardContent>
         </Card>
@@ -232,104 +293,102 @@ export function QuoteForm() {
 
       {/* RIGHT COLUMN - RESULTS */}
       <div className="lg:col-span-5 space-y-6 sticky top-24">
-        <Card className="bg-gradient-to-br from-slate-900 to-slate-800 text-white border-0 shadow-2xl overflow-hidden relative">
-            <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Sun className="h-64 w-64 text-yellow-400" />
+        <Card className="bg-gradient-to-br from-slate-800 via-slate-800 to-emerald-900/30 text-white border-0 shadow-xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 p-4 opacity-5">
+            <Sun className="h-40 w-40 text-amber-400" />
+          </div>
+          <CardHeader className="pb-2 relative z-10">
+            <CardTitle className="text-emerald-300 flex items-center gap-2 text-base font-semibold">
+              <Zap className="h-5 w-5 fill-emerald-400 text-emerald-400" />
+              {opsCopy.quoteSystemPerformance}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6 relative z-10">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+                <p className="text-slate-400 text-xs uppercase tracking-wider">{opsCopy.quoteSystemSize}</p>
+                <p className="text-3xl font-bold mt-1">{data.kwp} kWp</p>
+                <p className="text-emerald-300/90 text-xs mt-1">{opsCopy.quotePanelsApprox} {Math.round(data.kwp * 3.7)} {opsCopy.quotePanels}</p>
+              </div>
+              <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+                <p className="text-slate-400 text-xs uppercase tracking-wider">{opsCopy.quoteEstProduction}</p>
+                <p className="text-2xl font-bold mt-1">{data.production.toLocaleString('fr')}</p>
+                <p className="text-slate-400 text-xs mt-1">kWh/an</p>
+              </div>
             </div>
-            <CardHeader>
-                <CardTitle className="text-emerald-400 flex items-center gap-2">
-                    <Zap className="h-5 w-5 fill-emerald-400" />
-                    {opsCopy.quoteSystemPerformance}
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 relative z-10">
-                <div>
-                    <p className="text-slate-400 text-sm">{opsCopy.quoteSystemSize}</p>
-                    <p className="text-4xl font-bold">{data.kwp} kWp</p>
-                    <p className="text-emerald-400 text-sm font-medium">{opsCopy.quotePanelsApprox} {Math.round(data.kwp * 3.7)} {opsCopy.quotePanels}</p>
-                </div>
-                <div>
-                    <p className="text-slate-400 text-sm">{opsCopy.quoteEstProduction}</p>
-                    <p className="text-3xl font-bold">{data.production.toLocaleString('fr')} kWh</p>
-                </div>
-                <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
-                    <p className="text-slate-300 text-sm mb-1">{opsCopy.quotePaybackPeriod}</p>
-                    <p className="text-5xl font-bold text-emerald-400">{data.paybackYears} <span className="text-xl font-normal text-white">{opsCopy.quoteYears}</span></p>
-                    <p className="text-xs text-slate-400 mt-2">{opsCopy.quoteBasedOnPrices}</p>
-                </div>
-            </CardContent>
+            <div className="rounded-xl bg-emerald-500/20 border border-emerald-400/30 p-5">
+              <p className="text-slate-300 text-sm">{opsCopy.quotePaybackPeriod}</p>
+              <p className="text-4xl font-bold text-emerald-300 mt-1">{data.paybackYears} <span className="text-lg font-normal text-white/90">{opsCopy.quoteYears}</span></p>
+              <p className="text-xs text-slate-400 mt-2">{opsCopy.quoteBasedOnPrices}</p>
+            </div>
+          </CardContent>
         </Card>
 
-        <Card className="border-emerald-100 bg-white/90 shadow-xl">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Wallet className="h-5 w-5 text-emerald-600" />
-                    {opsCopy.quoteFinancialBreakdown}
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <div className="flex justify-between text-muted-foreground text-sm">
-                    <span>{opsCopy.quoteInstallationCost}</span>
-                    <span className="line-through">{data.installCost.toLocaleString('fr')} €</span>
-                </div>
-                <div className="flex justify-between text-emerald-600 font-bold">
-                    <span>Klimabonus 2026</span>
-                    <span>- {data.klimabonus.toLocaleString('fr')} €</span>
-                </div>
-                <div className="h-px bg-slate-200 my-2" />
-                <div className="flex flex-col gap-1">
-                    <div className="flex justify-between items-baseline">
-                        <span className="text-lg font-bold text-slate-700">{opsCopy.quoteEstimatedNetCost}</span>
-                    </div>
-                    <div className="flex justify-between items-baseline">
-                        <span className="text-slate-500 text-sm">{opsCopy.quoteIndicativeBand}</span>
-                        <span className="text-2xl md:text-3xl font-extrabold text-slate-900">
-                            {data.netCostMin.toLocaleString('fr')} – {data.netCostMax.toLocaleString('fr')} €
-                        </span>
-                    </div>
-                </div>
+        <Card className="border border-slate-200 bg-white shadow-md">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-800">
+              <Wallet className="h-5 w-5 text-emerald-600" />
+              {opsCopy.quoteFinancialBreakdown}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between text-slate-600 text-sm">
+              <span>{opsCopy.quoteInstallationCost}</span>
+              <span className="line-through">{data.installCost.toLocaleString('fr')} €</span>
+            </div>
+            <div className="flex justify-between text-emerald-700 font-semibold text-sm">
+              <span>Klimabonus 2026</span>
+              <span>- {data.klimabonus.toLocaleString('fr')} €</span>
+            </div>
+            <div className="h-px bg-slate-200 my-1" />
+            <div className="rounded-lg bg-emerald-50 border border-emerald-100 p-4">
+              <p className="text-slate-600 text-sm font-medium mb-1">{opsCopy.quoteEstimatedNetCost}</p>
+              <p className="text-2xl font-bold text-emerald-800">
+                {data.netCostMin.toLocaleString('fr')} – {data.netCostMax.toLocaleString('fr')} €
+              </p>
+              <p className="text-xs text-slate-500 mt-1">{opsCopy.quoteIndicativeBand}</p>
+            </div>
 
-                {isMarginBelowMinimum(data.installCost, data.netCostMin) && (
-                    <Alert className="bg-amber-50 border-amber-300 text-amber-900">
-                        <AlertTitle className="font-bold">{opsCopy.quoteMarginAlertTitle}</AlertTitle>
-                        <AlertDescription>
-                            {opsCopy.quoteMarginAlertDesc} (marge min. {Math.round(MIN_MARGIN_PERCENT * 100)} %)
-                        </AlertDescription>
-                    </Alert>
-                )}
-                
-                <div className="pt-4 space-y-3">
-                    <Button 
-                        onClick={handleAddToPipeline}
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 h-14 text-lg shadow-lg hover:shadow-blue-500/25"
-                    >
-                        {opsCopy.quoteAddToPipeline} <PlusCircle className="ml-2 h-5 w-5" />
-                    </Button>
-                    <Button 
-                        onClick={handleDownloadPDF} 
-                        disabled={isGenerating}
-                        className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 h-14 text-lg shadow-lg hover:shadow-emerald-500/25"
-                    >
-                        {isGenerating ? opsCopy.quoteGenerating : opsCopy.quoteGeneratePDF} <FileText className="ml-2 h-5 w-5" />
-                    </Button>
-                    <Button 
-                        onClick={handleWhatsApp}
-                        variant="outline" 
-                        className="w-full h-12 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
-                    >
-                        {opsCopy.quoteSendWhatsApp} <Send className="ml-2 h-4 w-4" />
-                    </Button>
-                </div>
-            </CardContent>
+            {isMarginBelowMinimum(data.installCost, data.netCostMin) && (
+              <Alert className="bg-amber-50 border-amber-300 text-amber-900">
+                <AlertTitle className="font-bold text-sm">{opsCopy.quoteMarginAlertTitle}</AlertTitle>
+                <AlertDescription className="text-sm">
+                  {opsCopy.quoteMarginAlertDesc} (marge min. {Math.round(MIN_MARGIN_PERCENT * 100)} %)
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <div className="pt-2 space-y-3">
+              <Button
+                onClick={handleAddToPipeline}
+                className="w-full h-12 bg-slate-800 hover:bg-slate-900 text-white font-medium shadow-md"
+              >
+                {opsCopy.quoteAddToPipeline} <PlusCircle className="ml-2 h-4 w-4" />
+              </Button>
+              <Button
+                onClick={handleDownloadPDF}
+                disabled={isGenerating}
+                className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-md"
+              >
+                {isGenerating ? opsCopy.quoteGenerating : opsCopy.quoteGeneratePDF} <FileText className="ml-2 h-4 w-4" />
+              </Button>
+              <Button
+                onClick={handleWhatsApp}
+                variant="outline"
+                className="w-full h-11 border-slate-200 text-slate-700 hover:bg-slate-50"
+              >
+                {opsCopy.quoteSendWhatsApp} <Send className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
         </Card>
 
-        <Alert className="bg-amber-50 border-amber-200 text-amber-800">
-            <AlertTitle className="font-bold flex items-center gap-2">
-                ⚠️ Pricing Note
-            </AlertTitle>
-            <AlertDescription>
-                Connect your Excel price list for exact margins. This demo uses approximate market rates (Basic €2,100/kWp, Premium €2,400/kWp; battery +€6,500).
-            </AlertDescription>
+        <Alert className="bg-slate-50 border-slate-200 text-slate-700">
+          <AlertTitle className="font-semibold text-sm">{opsCopy.quotePricingNoteTitle}</AlertTitle>
+          <AlertDescription className="text-xs">
+            {opsCopy.quotePricingNoteBody}
+          </AlertDescription>
         </Alert>
       </div>
     </div>
