@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Project, ProjectStatus } from '@/types';
 import { useProjects } from './Providers';
@@ -33,9 +33,9 @@ function DraggableProjectCard({ project }: { project: Project }) {
   } : undefined;
 
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes} className={`mb-3 touch-none ${isDragging ? 'opacity-50 z-50' : ''}`}>
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes} className={`mb-3 touch-none select-none ${isDragging ? 'opacity-40 z-50 scale-[0.98]' : 'transition-shadow duration-150'}`}>
       <Link href={`/projects/${project.id}`}>
-        <Card className="cursor-pointer hover:shadow-md transition-all active:cursor-grabbing border-l-4 border-l-primary/50">
+        <Card className="cursor-grab hover:shadow-md active:cursor-grabbing border-l-4 border-l-primary/50 transition-shadow duration-150">
           <CardContent className="p-3">
             <div className="flex justify-between items-start mb-2">
               <h4 className="font-bold text-sm text-slate-900 line-clamp-1">{project.clientName}</h4>
@@ -92,11 +92,8 @@ export function KanbanBoard() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    })
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 120, tolerance: 8 } })
   );
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -122,7 +119,7 @@ export function KanbanBoard() {
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex gap-4 overflow-x-auto pb-8 pt-2 px-2 snap-x">
+      <div className="flex gap-4 overflow-x-auto overflow-y-hidden pb-8 pt-2 px-2 snap-x scroll-smooth">
         {COLUMNS.map(column => (
           <DroppableColumn 
             key={column.id} 
@@ -131,9 +128,9 @@ export function KanbanBoard() {
           />
         ))}
       </div>
-      <DragOverlay>
+      <DragOverlay dropAnimation={null}>
         {activeProject ? (
-           <Card className="cursor-grabbing shadow-2xl rotate-3 scale-105 border-l-4 border-l-primary bg-white opacity-90 w-[280px]">
+           <Card className="cursor-grabbing shadow-2xl rotate-2 scale-[1.02] border-l-4 border-l-primary bg-white/95 w-[280px] transition-shadow duration-100 will-change-transform">
              <CardContent className="p-3">
                <h4 className="font-bold text-sm">{activeProject.clientName}</h4>
                <p className="text-xs text-muted-foreground">{activeProject.address}</p>

@@ -26,6 +26,22 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/")) return "react";
+          if (id.includes("node_modules/@dnd-kit/")) return "dnd";
+          if (id.includes("node_modules/@radix-ui/") || id.includes("node_modules/radix-ui")) return "radix";
+          if (id.includes("node_modules/@tanstack/")) return "tanstack";
+          if (id.includes("node_modules/wouter")) return "wouter";
+          if (id.includes("pdf-lib") || id.includes("pdf")) return "pdf";
+        },
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash][extname]",
+      },
+    },
+    chunkSizeWarningLimit: 600,
   },
   server: {
     host: "0.0.0.0",

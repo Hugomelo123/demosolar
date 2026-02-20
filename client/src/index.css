@@ -111,10 +111,20 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply font-sans antialiased bg-gradient-to-br from-green-50 to-blue-50 min-h-screen text-foreground;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display font-bold tracking-tight;
+  }
+}
+
+/* Fluidez: transições suaves em elementos interativos */
+@media (prefers-reduced-motion: no-preference) {
+  [data-dnd-kit-draggable] {
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
   }
 }
