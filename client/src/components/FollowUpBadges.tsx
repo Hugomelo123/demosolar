@@ -2,7 +2,7 @@ import React from 'react';
 import { Badge } from "./ui/badge";
 import { Project } from "@/types";
 
-export function FollowUpBadges({ project }: { project: Project }) {
+export const FollowUpBadges = React.memo(function FollowUpBadges({ project }: { project: Project }) {
   const badges = [];
 
   if (project.lastContactDaysAgo > 10) {
@@ -32,4 +32,4 @@ export function FollowUpBadges({ project }: { project: Project }) {
   if (badges.length === 0) return null;
 
   return <div className="flex flex-wrap gap-1 mt-2">{badges}</div>;
-}
+});

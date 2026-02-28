@@ -11,7 +11,7 @@ interface StatsCardProps {
   icon?: React.ReactNode;
 }
 
-export function StatsCard({ title, value, change, trend, icon }: StatsCardProps) {
+export const StatsCard = React.memo(function StatsCard({ title, value, change, trend, icon }: StatsCardProps) {
   return (
     <Card className="hover:shadow-xl transition-shadow duration-300 border-white/60">
       <CardContent className="p-6">
@@ -43,4 +43,4 @@ export function StatsCard({ title, value, change, trend, icon }: StatsCardProps)
       </CardContent>
     </Card>
   );
-}
+});

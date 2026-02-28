@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Project, ProjectStatus } from '@/types';
 import { useProjects } from './Providers';
 import { Card, CardContent } from './ui/card';
@@ -12,6 +11,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { Link } from 'wouter';
 import { nextActionToLabel } from './NextActionCard';
 import { opsCopy } from '@/config/opsCopy';
+
+const EMPTY_ARRAY: Project[] = [];
 
 const COLUMNS: { id: ProjectStatus; title: string; color: string }[] = [
   { id: 'lead', title: 'Lead', color: 'bg-slate-100' },
@@ -73,7 +74,7 @@ const DroppableColumn = React.memo(function DroppableColumn({ column, projects }
   });
 
   return (
-    <div ref={setNodeRef} className={`flex-1 min-w-[280px] rounded-xl p-2 ${column.color} border border-white/50 backdrop-blur-sm shadow-inner`}>
+    <div ref={setNodeRef} className={`flex-1 min-w-[280px] rounded-xl p-2 ${column.color} border border-slate-200/70 shadow-inner`}>
       <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500 mb-3 px-2 flex justify-between">
         {column.title}
         <span className="bg-white/50 px-2 rounded-full text-slate-400">{projects.length}</span>
@@ -129,7 +130,7 @@ export function KanbanBoard() {
           <DroppableColumn
             key={column.id}
             column={column}
-            projects={projectsByColumn[column.id] ?? []}
+            projects={projectsByColumn[column.id] ?? EMPTY_ARRAY}
           />
         ))}
       </div>
