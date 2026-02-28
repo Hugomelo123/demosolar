@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Project, ProjectStatus, NextAction } from '../types';
 import { initialProjects } from '../lib/mockData';
 
@@ -27,16 +27,16 @@ const ProjectsContext = createContext<ProjectsContextType | undefined>(undefined
 
 export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Load from local storage on mount (optional for persistence across reloads in demo)
+  // Load from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('solarops_projects');
     if (saved) {
       try {
-        // Need to parse dates back from JSON strings
         const parsed = JSON.parse(saved, (key, value) => {
-            if (key === 'createdAt') return new Date(value);
-            return value;
+          if (key === 'createdAt') return new Date(value);
+          return value;
         });
         setProjects(parsed);
       } catch (e) {
@@ -45,22 +45,28 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Save to local storage on change
+  // Debounced save to localStorage (300ms) — avoids blocking on every keystroke/drag
   useEffect(() => {
-    localStorage.setItem('solarops_projects', JSON.stringify(projects));
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      localStorage.setItem('solarops_projects', JSON.stringify(projects));
+    }, 300);
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
   }, [projects]);
 
-  const updateProject = (id: string, patch: Partial<Project>) => {
+  const updateProject = useCallback((id: string, patch: Partial<Project>) => {
     setProjects(prev => prev.map(p => p.id === id ? { ...p, ...patch } : p));
-  };
+  }, []);
 
-  const moveProject = (id: string, status: ProjectStatus) => {
-    setProjects(prev => prev.map(p => 
+  const moveProject = useCallback((id: string, status: ProjectStatus) => {
+    setProjects(prev => prev.map(p =>
       p.id === id ? { ...p, status, daysInStage: 0 } : p
     ));
-  };
+  }, []);
 
-  const addProject = (data: AddProjectData): Project => {
+  const addProject = useCallback((data: AddProjectData): Project => {
     const id = crypto.randomUUID();
     const newProject: Project = {
       id,
@@ -80,28 +86,38 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     };
     setProjects(prev => [...prev, newProject]);
     return newProject;
-  };
+  }, []);
 
-  const addNote = (id: string, note: string) => {
-    setProjects(prev => prev.map(p => 
+  const addNote = useCallback((id: string, note: string) => {
+    setProjects(prev => prev.map(p =>
       p.id === id ? { ...p, notes: [...p.notes, note] } : p
     ));
-  };
+  }, []);
 
-  const markContacted = (id: string) => {
-    setProjects(prev => prev.map(p => 
+  const markContacted = useCallback((id: string) => {
+    setProjects(prev => prev.map(p =>
       p.id === id ? { ...p, lastContactDaysAgo: 0 } : p
     ));
-  };
+  }, []);
 
-  const setNextAction = (id: string, nextAction: NextAction) => {
-    setProjects(prev => prev.map(p => 
+  const setNextAction = useCallback((id: string, nextAction: NextAction) => {
+    setProjects(prev => prev.map(p =>
       p.id === id ? { ...p, nextAction } : p
     ));
-  };
+  }, []);
+
+  const value = useMemo(() => ({
+    projects,
+    updateProject,
+    moveProject,
+    addProject,
+    addNote,
+    markContacted,
+    setNextAction,
+  }), [projects, updateProject, moveProject, addProject, addNote, markContacted, setNextAction]);
 
   return (
-    <ProjectsContext.Provider value={{ projects, updateProject, moveProject, addProject, addNote, markContacted, setNextAction }}>
+    <ProjectsContext.Provider value={value}>
       {children}
     </ProjectsContext.Provider>
   );

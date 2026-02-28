@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Project, ProjectStatus } from '@/types';
@@ -22,7 +22,7 @@ const COLUMNS: { id: ProjectStatus; title: string; color: string }[] = [
   { id: 'completed', title: 'Terminé', color: 'bg-slate-200' },
 ];
 
-function DraggableProjectCard({ project }: { project: Project }) {
+const DraggableProjectCard = React.memo(function DraggableProjectCard({ project }: { project: Project }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: project.id,
     data: { project },
@@ -65,9 +65,9 @@ function DraggableProjectCard({ project }: { project: Project }) {
       </Link>
     </div>
   );
-}
+});
 
-function DroppableColumn({ column, projects }: { column: typeof COLUMNS[0], projects: Project[] }) {
+const DroppableColumn = React.memo(function DroppableColumn({ column, projects }: { column: typeof COLUMNS[0], projects: Project[] }) {
   const { setNodeRef } = useDroppable({
     id: column.id,
   });
@@ -85,7 +85,7 @@ function DroppableColumn({ column, projects }: { column: typeof COLUMNS[0], proj
       </div>
     </div>
   );
-}
+});
 
 export function KanbanBoard() {
   const { projects, moveProject } = useProjects();
@@ -96,35 +96,40 @@ export function KanbanBoard() {
     useSensor(TouchSensor, { activationConstraint: { delay: 120, tolerance: 8 } })
   );
 
-  const handleDragStart = (event: DragStartEvent) => {
+  const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string);
-  };
+  }, []);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
-    
     if (over && active.id !== over.id) {
       const projectId = active.id as string;
       const newStatus = over.id as ProjectStatus;
-      
-      // Only move if status is valid
       if (COLUMNS.some(c => c.id === newStatus)) {
         moveProject(projectId, newStatus);
       }
     }
     setActiveId(null);
-  };
+  }, [moveProject]);
 
-  const activeProject = activeId ? projects.find(p => p.id === activeId) : null;
+  const projectsByColumn = useMemo(() =>
+    Object.fromEntries(COLUMNS.map(c => [c.id, projects.filter(p => p.status === c.id)])),
+    [projects]
+  );
+
+  const activeProject = useMemo(() =>
+    activeId ? projects.find(p => p.id === activeId) ?? null : null,
+    [activeId, projects]
+  );
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="flex gap-4 overflow-x-auto overflow-y-hidden pb-8 pt-2 px-2 snap-x scroll-smooth">
         {COLUMNS.map(column => (
-          <DroppableColumn 
-            key={column.id} 
-            column={column} 
-            projects={projects.filter(p => p.status === column.id)} 
+          <DroppableColumn
+            key={column.id}
+            column={column}
+            projects={projectsByColumn[column.id] ?? []}
           />
         ))}
       </div>

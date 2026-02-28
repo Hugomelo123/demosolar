@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useProjects } from "./Providers";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { AlertTriangle, Clock, PhoneCall } from "lucide-react";
@@ -9,11 +9,12 @@ import { opsCopy } from "@/config/opsCopy";
 export function BottleneckAlert() {
   const { projects } = useProjects();
 
-  const creosStuck = projects.filter(p => p.status === 'creos' && p.daysInStage > 21);
-  const quoteStuck = projects.filter(p => p.status === 'quote' && p.daysInStage > 14);
-  const followUpNeeded = projects.filter(p => p.lastContactDaysAgo > 7);
-
-  const totalAlerts = creosStuck.length + quoteStuck.length + followUpNeeded.length;
+  const { creosStuck, quoteStuck, followUpNeeded, totalAlerts } = useMemo(() => {
+    const creosStuck = projects.filter(p => p.status === 'creos' && p.daysInStage > 21);
+    const quoteStuck = projects.filter(p => p.status === 'quote' && p.daysInStage > 14);
+    const followUpNeeded = projects.filter(p => p.lastContactDaysAgo > 7);
+    return { creosStuck, quoteStuck, followUpNeeded, totalAlerts: creosStuck.length + quoteStuck.length + followUpNeeded.length };
+  }, [projects]);
 
   if (totalAlerts === 0) return null;
 

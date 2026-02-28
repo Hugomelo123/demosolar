@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StatsCard } from '@/components/StatsCard';
 import { BottleneckAlert } from '@/components/BottleneckAlert';
 import { KanbanBoard } from '@/components/KanbanBoard';
@@ -10,15 +10,18 @@ import { opsCopy } from '@/config/opsCopy';
 export default function Dashboard() {
   const { projects } = useProjects();
 
-  const newLeads = projects.filter(p => p.status === 'lead').length;
-  const quotesSent = projects.filter(p => p.status === 'quote').length;
-  const creosOrLater = projects.filter(p => p.status === 'creos' || p.status === 'installation' || p.status === 'completed').length;
-  const pipelineValue = projects.reduce((acc, p) => acc + p.value, 0);
-
-  const inPipeline = projects.filter(p => p.status !== 'completed');
-  const valueInPipeline = inPipeline.reduce((acc, p) => acc + p.value, 0);
-  const valueStuck14 = inPipeline.filter(p => p.daysInStage >= 14).reduce((acc, p) => acc + p.value, 0);
-  const noContactCount = inPipeline.filter(p => (p.lastContactDaysAgo ?? 0) >= 14).length;
+  const { newLeads, quotesSent, creosOrLater, pipelineValue, valueInPipeline, valueStuck14, noContactCount } = useMemo(() => {
+    const inPipeline = projects.filter(p => p.status !== 'completed');
+    return {
+      newLeads: projects.filter(p => p.status === 'lead').length,
+      quotesSent: projects.filter(p => p.status === 'quote').length,
+      creosOrLater: projects.filter(p => p.status === 'creos' || p.status === 'installation' || p.status === 'completed').length,
+      pipelineValue: projects.reduce((acc, p) => acc + p.value, 0),
+      valueInPipeline: inPipeline.reduce((acc, p) => acc + p.value, 0),
+      valueStuck14: inPipeline.filter(p => p.daysInStage >= 14).reduce((acc, p) => acc + p.value, 0),
+      noContactCount: inPipeline.filter(p => (p.lastContactDaysAgo ?? 0) >= 14).length,
+    };
+  }, [projects]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
