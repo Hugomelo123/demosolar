@@ -51,8 +51,8 @@ export default function ProjectDetails() {
         <div>
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-3xl font-bold text-slate-900">{project.clientName}</h1>
-            <Badge variant="outline" className="text-base px-3 py-1 bg-white border-slate-300 capitalize">
-                {project.status}
+            <Badge variant="outline" className="text-base px-3 py-1 bg-white border-slate-300">
+                {({ lead: opsCopy.stepLead, visit: opsCopy.stepVisit, quote: opsCopy.stepQuote, creos: opsCopy.stepCreos, installation: opsCopy.stepInstallation, completed: opsCopy.stepCompleted } as Record<string, string>)[project.status] ?? project.status}
             </Badge>
           </div>
           <div className="flex items-center text-muted-foreground gap-2">

@@ -7,7 +7,7 @@ export const demo = {
   companyName: 'SolarOps Luxembourg',
   consoleTagline: 'Console opérations',
   userName: 'Hugo M.',
-  userRole: 'Sales Director',
+  userRole: 'Directeur Commercial',
   /** Nome do subsídio (ex. PDF, copy) */
   subsidyName: 'Klimabonus',
   /** Nome do operador de rede (ex. alertas, copy) */

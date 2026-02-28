@@ -61,7 +61,9 @@ export function NextActionCard({ project }: NextActionCardProps) {
       </CardHeader>
       <CardContent>
         <p className="text-muted-foreground">
-            {opsCopy.currentStage}: <span className="font-bold text-foreground capitalize">{project.status}</span> • {opsCopy.daysInStage}: {project.daysInStage}
+            {opsCopy.currentStage}: <span className="font-bold text-foreground">
+              {({ lead: opsCopy.stepLead, visit: opsCopy.stepVisit, quote: opsCopy.stepQuote, creos: opsCopy.stepCreos, installation: opsCopy.stepInstallation, completed: opsCopy.stepCompleted } as Record<string, string>)[project.status] ?? project.status}
+            </span> • {opsCopy.daysInStage}: {project.daysInStage}
         </p>
       </CardContent>
       <CardFooter className="gap-3 flex-wrap">

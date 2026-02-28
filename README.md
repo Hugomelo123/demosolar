@@ -1,23 +1,27 @@
-# SolarOps Luxembourg — Operations Demo
+# SolarOps Luxembourg — Demo Portfolio
 
-> **Operations console for solar installers in Luxembourg.** Quotes in 5 minutes, visible pipeline, CREOS bottlenecks, and installation checklist — all in one place. Built to show control, speed, and process (Operations & Digital).
+> **Portfolio demo construído por Hugo Melo para candidatura a empresas do setor solar no Luxemburgo.**
+> Mostra compreensão do negócio + competências full-stack (React 19, TypeScript, PDF, Kanban, testes unitários).
 
 ---
 
-## What is this?
+## Porquê este projeto?
 
-A **demo MVP** that replaces scattered Excel, WhatsApp, and paper with a single operations panel. In **30 seconds** a manager sees: leads, pipeline value, CREOS bottlenecks, and instant quote generation with **Klimabonus 2026** (Luxembourg subsidy) and professional PDF output.
+Estudei o mercado solar luxemburguês e identifiquei um problema operacional concreto: as equipas de vendas e instalação gerem leads, devis, CREOS e instalações com Excel, WhatsApp e papel. O resultado é pipeline invisível, gargalos CREOS que custam semanas, e erros de seguimento.
 
-- **Quote in 5 minutes** — Real-time kWp, Klimabonus, payback; PDF and WhatsApp-ready; indicative price range (not a fixed quote).
-- **Visible pipeline** — Lead → Quote → CREOS → Installation → Done. Kanban with drag-and-drop.
-- **Bottlenecks at a glance** — CREOS stuck >21 days, quote no reply >14 days, no contact >7 days.
-- **Next action** per project + **per-project installation checklist** (state persisted in `localStorage`).
+Esta consola resolve esse problema:
+- **Dashboard em 30 segundos** — pipeline total, valor, alertas CREOS, projetos sem contacto
+- **Devis em 5 minutos** — cálculo real com Klimabonus 2026, PDF profissional, fourchette indicativa
+- **Pipeline Kanban** — Lead → Visita → Devis → CREOS → Instalação → Terminado
+- **Checklist de instalação** — por projeto, 3 fases, persistido localmente
+
+O objetivo é mostrar que posso **ser contratado** para ajudar uma empresa solar a digitalizar e escalar as suas operações.
 
 ---
 
 ## Quick start
 
-**Requirements:** Node.js 18+, npm or yarn.
+**Requisitos:** Node.js 18+, npm.
 
 ```bash
 git clone https://github.com/Hugomelo123/demosolar.git
@@ -26,79 +30,90 @@ npm install
 npm run dev:client
 ```
 
-Open **http://localhost:5002** — you’ll see the dashboard, pipeline, and quote flow in under 30 seconds.
+Abrir **http://localhost:5002** — dashboard, pipeline e devis visíveis em menos de 30 segundos.
 
 ---
 
-## Features
+## Funcionalidades
 
-| Feature | Description |
-|--------|-------------|
-| **Quote in 5 min** | Form with live calculations (kWp, Klimabonus, payback); professional PDF; indicative cost range. |
-| **Add to pipeline** | Turn a quote into a project (Quote Sent column); redirects to project detail. |
-| **Dashboard** | Metrics (leads, quotes sent, CREOS/install count, pipeline value); funnel; Kanban. |
-| **Alerts** | CREOS >21 days, quote >14 days, no contact >7 days — with links to projects. |
-| **Project detail** | Stepper, notes, schedule site visit, next action, WhatsApp templates. |
-| **Installation checklist** | Per-project checklist (pre / day-of / post install); state saved per project in `localStorage`. |
+| Funcionalidade | Descrição |
+|----------------|-----------|
+| **Devis em 5 min** | Formulário com cálculos em tempo real (kWp, Klimabonus, retorno); PDF profissional; fourchette indicativa. |
+| **Adicionar ao pipeline** | Converte o devis num projeto (coluna Devis Enviado); redireciona para detalhe. |
+| **Dashboard** | Métricas (leads, devis enviados, CREOS/instalação, valor pipeline); funil; Kanban. |
+| **Alertas** | CREOS >21 dias, devis >14 dias, sem contacto >7 dias — com links diretos. |
+| **Detalhe do projeto** | Stepper, notas, agendar visita, próxima ação, templates WhatsApp. |
+| **Checklist instalação** | Por projeto (pré / dia-de / pós instalação); estado guardado por projeto em `localStorage`. |
 
 ---
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev:client` | Frontend only (Vite), http://localhost:5002 |
-| `npm run dev` | Full stack (client + server) |
-| `npm run build` | Production build |
-| `npm start` | Run production server |
-| `npm test` | Unit tests (Vitest) — calculations & business rules |
-| `npm run check` | TypeScript check |
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev:client` | Frontend apenas (Vite), http://localhost:5002 |
+| `npm run dev` | Full stack (cliente + servidor) |
+| `npm run build` | Build de produção |
+| `npm start` | Servidor de produção |
+| `npm test` | Testes unitários (Vitest) — cálculos e regras de negócio |
+| `npm run check` | Verificação TypeScript |
 
 ---
 
-## Demo mode
+## Modo demo
 
-- **No database.** Data lives in React state and is persisted in `localStorage` (survives reloads).
-- **Reset:** Clear `localStorage` in the browser (keys `solarops_projects` and `solarops_checklist`) or use a private window.
+- **Sem base de dados.** Dados em React state + `localStorage` (sobrevive a reloads).
+- **Reset:** Limpar `localStorage` no browser (chaves `solarops_projects` e `solarops_checklist`) ou abrir em janela privada.
 
-### Calculation rules (simplified for demo)
+### Regras de cálculo (simplificadas para demo)
 
-- **kWp:** roof area (m²) × 0.17 · **Production:** kWp × 1150 kWh/year.
-- **Klimabonus (indicative):** ≤15 kWp → €9,300; >15 kWp → €9,300 + €620/kWp extra; battery +€2,250.
-- **Installation:** Basic €2,100/kWp, Premium €2,400/kWp; battery ~€6,500.
-- **Annual savings:** % of annual bill (low 35%, normal 45%, high 55%). Net cost = max(0, installation − Klimabonus).
-- **Quote range:** Net cost shown as a band (e.g. €12,000 – €13,440), not a single price; ~12% margin on upper bound for post–site-visit adjustment.
-
----
-
-## Adapting for another company or region
-
-**Branding (single file):** **`client/src/config/demo.ts`**
-
-- `companyName` — Company name (navbar, PDF).
-- `consoleTagline` — Console subtitle.
-- `userName` / `userRole` — User name and role (top-right).
-- `subsidyName` / `operatorName` — Subsidy and grid operator names (e.g. Klimabonus, CREOS).
-
-All other UI copy is in **`client/src/config/opsCopy.ts`**. Calculation rules and constants are in **`client/src/lib/calculations.ts`** — change the constants at the top for another country or year.
+- **kWp:** superfície telhado (m²) × 0,17 · **Produção:** kWp × 1150 kWh/ano.
+- **Klimabonus (indicativo):** ≤15 kWp → €9.300; >15 kWp → €9.300 + €620/kWp extra; bateria +€2.250.
+- **Instalação:** Basic €2.100/kWp, Premium €2.400/kWp; bateria ~€6.500.
+- **Poupança anual:** % da fatura anual (baixo 35%, normal 45%, elevado 55%). Custo líquido = max(0, instalação − Klimabonus).
+- **Fourchette:** Custo líquido apresentado como banda (ex. €12.000 – €13.440), não preço fixo; ~12% margem no limite superior.
 
 ---
 
-## Deploy (live link for emails)
+## Adaptar para outra empresa ou região
 
-To publish the demo (e.g. Vercel or Netlify): see **[docs/DEPLOY.md](docs/DEPLOY.md)** for build command and output directory (`dist/public`).
+**Branding (ficheiro único):** **`client/src/config/demo.ts`**
+
+- `companyName` — Nome da empresa (navbar, PDF).
+- `consoleTagline` — Subtítulo da consola.
+- `userName` / `userRole` — Nome e cargo do utilizador (canto superior direito).
+- `subsidyName` / `operatorName` — Nome do subsídio e operador de rede (ex. Klimabonus, CREOS).
+
+Todo o copy da UI está em **`client/src/config/opsCopy.ts`**. Regras de cálculo e constantes em **`client/src/lib/calculations.ts`**.
 
 ---
 
-## Tech stack
+## Deploy (link ao vivo para enviar por email)
+
+Para publicar o demo (ex. Vercel ou Netlify): ver **[docs/DEPLOY.md](docs/DEPLOY.md)** — build command: `npm run build`, output: `dist/public`.
+
+---
+
+## Stack técnica
 
 - **Frontend:** React 19, Vite 7, Wouter, Tailwind CSS 4, Radix UI, TanStack Query
-- **Backend:** Express 5 (API routes not yet wired to the app)
-- **Types:** TypeScript (strict), Zod
-- **Tests:** Vitest (calculation and business-rule tests)
+- **Backend:** Express 5 (rotas API preparadas, não ligadas ao demo)
+- **Tipos:** TypeScript (strict mode), Zod
+- **Testes:** Vitest (testes de cálculo e regras de negócio)
+- **PDF:** pdf-lib (geração client-side, sem servidor)
+- **Drag-and-drop:** dnd-kit
 
 ---
 
-## License
+## Sobre o autor
+
+**Hugo Melo** — candidato a posições de operações, digital ou gestão comercial no setor solar no Luxemburgo.
+
+- GitHub: [github.com/Hugomelo123](https://github.com/Hugomelo123)
+- LinkedIn: [linkedin.com/in/hugomelo123](https://www.linkedin.com/in/hugomelo123)
+
+---
+
+## Licença
 
 MIT
