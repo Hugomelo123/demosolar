@@ -13,8 +13,8 @@ export const opsCopy = {
   userRole: demo.userRole,
   /** Dashboard: 30-second value */
   dashboardHeadline: 'Vos opérations en un coup d\'œil',
-  dashboardSubline: 'Leads · Valeur pipeline · Gargalos CREOS · Prochaines actions. Fini Excel, WhatsApp et le papier qui vole.',
-  funnelSteps: 'Lead → Devis → CREOS → Installation → Terminé',
+  dashboardSubline: 'Pipeline complet · alertes CREOS · KlimaBonus 2026 · relances identifiées. Toutes les opérations en un seul endroit.',
+  funnelSteps: 'Prospection → Visite → Devis + KlimaBonus → Autorisation CREOS → Installation → Raccordement → Terminé',
   /** Metrics labels */
   metricLeads: 'Nouveaux leads',
   metricDevisSent: 'Devis envoyés',
@@ -173,12 +173,15 @@ export const opsCopy = {
   checklistWalkthrough: 'Visite client et config app',
   checklistDocs: 'Remise documentation finale',
   checklistPhotos: 'Photos installation uploadées',
+  /** Next action */
+  nextActionScheduleRaccordement: 'Planifier raccordement CREOS',
   /** Stepper (optional display) */
-  stepLead: 'Lead',
+  stepLead: 'Prospection',
   stepVisit: 'Visite',
   stepQuote: 'Devis',
   stepCreos: 'CREOS',
   stepInstallation: 'Install',
+  stepRaccordement: 'Raccordement',
   stepCompleted: 'Terminé',
   /** PDF */
   pdfSubsidyNote: 'Klimabonus 2026 (indicatif). Préfinancement possible : l\'installateur déduit la prime de la facture s\'il est agréé (Guichet.lu).',

@@ -18,6 +18,7 @@ export const nextActionToLabel: Record<NextAction, string> = {
   'Send CREOS documents': 'Envoyer dossier CREOS',
   'Request deposit': 'Demander acompte',
   'Plan installation date': 'Planifier date installation',
+  'Schedule CREOS raccordement': 'Planifier raccordement CREOS',
   'Close project': 'Clôturer le projet',
 };
 
@@ -26,7 +27,7 @@ export function NextActionCard({ project }: NextActionCardProps) {
   const [, setLocation] = useLocation();
 
   const handleAdvance = () => {
-    const stages: ProjectStatus[] = ['lead', 'visit', 'quote', 'creos', 'installation', 'completed'];
+    const stages: ProjectStatus[] = ['lead', 'visit', 'quote', 'creos', 'installation', 'raccordement', 'completed'];
     const currentIndex = stages.indexOf(project.status);
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
@@ -36,6 +37,7 @@ export function NextActionCard({ project }: NextActionCardProps) {
         'quote': 'Send quote PDF',
         'creos': 'Send CREOS documents',
         'installation': 'Plan installation date',
+        'raccordement': 'Schedule CREOS raccordement',
         'completed': 'Close project'
       };
       if (nextActions[nextStage]) {
@@ -62,7 +64,7 @@ export function NextActionCard({ project }: NextActionCardProps) {
       <CardContent>
         <p className="text-muted-foreground">
             {opsCopy.currentStage}: <span className="font-bold text-foreground">
-              {({ lead: opsCopy.stepLead, visit: opsCopy.stepVisit, quote: opsCopy.stepQuote, creos: opsCopy.stepCreos, installation: opsCopy.stepInstallation, completed: opsCopy.stepCompleted } as Record<string, string>)[project.status] ?? project.status}
+              {({ lead: opsCopy.stepLead, visit: opsCopy.stepVisit, quote: opsCopy.stepQuote, creos: opsCopy.stepCreos, installation: opsCopy.stepInstallation, raccordement: opsCopy.stepRaccordement, completed: opsCopy.stepCompleted } as Record<string, string>)[project.status] ?? project.status}
             </span> • {opsCopy.daysInStage}: {project.daysInStage}
         </p>
       </CardContent>

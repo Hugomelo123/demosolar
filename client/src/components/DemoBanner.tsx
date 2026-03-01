@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export function DemoBanner() {
+  const [dismissed, setDismissed] = useState(false);
+  if (dismissed) return null;
+
   return (
-    <div className="bg-gradient-to-r from-emerald-600 to-blue-600 text-white px-4 py-2.5 text-center text-sm border-b border-emerald-700/30">
-      <span className="font-semibold">Portfolio demo · Hugo Melo</span>
-      <span className="mx-2 opacity-60">·</span>
-      <span>Console opérations solaire Luxembourg — construit pour montrer une compréhension métier + compétences full-stack</span>
-      <span className="mx-2 opacity-60">·</span>
-      <span className="opacity-80">Données locales (navigateur) · En production : connecté à votre CRM</span>
+    <div className="bg-slate-800 text-slate-300 px-4 py-2 text-xs flex items-center justify-between gap-4">
+      <span>
+        <span className="text-slate-500 mr-2">Demo ·</span>
+        Données fictives basées sur le marché solaire luxembourgeois
+      </span>
+      <button
+        onClick={() => setDismissed(true)}
+        className="text-slate-500 hover:text-slate-200 transition-colors flex-shrink-0 text-base leading-none"
+        aria-label="Fermer"
+      >
+        ×
+      </button>
     </div>
   );
 }

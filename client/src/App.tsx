@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Layout from "./layout";
 
+const LandingPage = React.lazy(() => import("@/pages/landing"));
 const Dashboard = React.lazy(() => import("@/pages/dashboard"));
 const QuotePage = React.lazy(() => import("@/pages/quote"));
 const ProjectDetails = React.lazy(() => import("@/pages/project-details"));
@@ -23,18 +24,27 @@ function PageFallback() {
 
 function Router() {
   return (
-    <Layout>
-      <Suspense fallback={<PageFallback />}>
-        <Switch>
-          <Route path="/" component={Dashboard} />
-          <Route path="/analytics" component={AnalyticsPage} />
-          <Route path="/quote" component={QuotePage} />
-          <Route path="/projects/:id" component={ProjectDetails} />
-          <Route path="/install/:id" component={InstallChecklistPage} />
-          <Route component={NotFound} />
-        </Switch>
-      </Suspense>
-    </Layout>
+    <Switch>
+      <Route path="/">
+        <Suspense fallback={<PageFallback />}>
+          <LandingPage />
+        </Suspense>
+      </Route>
+      <Route>
+        <Layout>
+          <Suspense fallback={<PageFallback />}>
+            <Switch>
+              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/analytics" component={AnalyticsPage} />
+              <Route path="/quote" component={QuotePage} />
+              <Route path="/projects/:id" component={ProjectDetails} />
+              <Route path="/install/:id" component={InstallChecklistPage} />
+              <Route component={NotFound} />
+            </Switch>
+          </Suspense>
+        </Layout>
+      </Route>
+    </Switch>
   );
 }
 

@@ -9,12 +9,13 @@ import { TrendingUp, Euro, Target, Clock } from 'lucide-react';
 import { ProjectStatus } from '@/types';
 
 const STAGE_META: { id: ProjectStatus; label: string; color: string }[] = [
-  { id: 'lead',         label: 'Lead',    color: '#94a3b8' },
-  { id: 'visit',        label: 'Visite',  color: '#60a5fa' },
-  { id: 'quote',        label: 'Devis',   color: '#f59e0b' },
-  { id: 'creos',        label: 'CREOS',   color: '#a78bfa' },
-  { id: 'installation', label: 'Install', color: '#10b981' },
-  { id: 'completed',    label: 'Terminé', color: '#475569' },
+  { id: 'lead',           label: 'Prospection',   color: '#94a3b8' },
+  { id: 'visit',          label: 'Visite',         color: '#60a5fa' },
+  { id: 'quote',          label: 'Devis',          color: '#f59e0b' },
+  { id: 'creos',          label: 'CREOS',          color: '#a78bfa' },
+  { id: 'installation',   label: 'Installation',   color: '#10b981' },
+  { id: 'raccordement',   label: 'Raccordement',   color: '#6366f1' },
+  { id: 'completed',      label: 'Terminé',        color: '#475569' },
 ];
 
 export default function Analytics() {
@@ -136,7 +137,7 @@ export default function Analytics() {
         </CardHeader>
         <CardContent className="pt-4">
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={funnelData.slice(0, 5)} margin={{ top: 16, right: 16, left: 0, bottom: 4 }}>
+            <BarChart data={funnelData.slice(0, 6)} margin={{ top: 16, right: 16, left: 0, bottom: 4 }}>
               <XAxis dataKey="stage" tick={{ fontSize: 11, fill: '#475569' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} unit="j" />
               <Tooltip
@@ -145,7 +146,7 @@ export default function Analytics() {
                 cursor={{ fill: '#f8fafc' }}
               />
               <Bar dataKey="avgDays" radius={[6, 6, 0, 0]} maxBarSize={48}>
-                {funnelData.slice(0, 5).map((e, i) => <Cell key={i} fill={e.color} fillOpacity={0.85} />)}
+                {funnelData.slice(0, 6).map((e, i) => <Cell key={i} fill={e.color} fillOpacity={0.85} />)}
                 <LabelList
                   dataKey="avgDays"
                   position="top"

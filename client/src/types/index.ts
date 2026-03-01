@@ -1,4 +1,4 @@
-export type ProjectStatus = 'lead' | 'visit' | 'quote' | 'creos' | 'installation' | 'completed';
+export type ProjectStatus = 'lead' | 'visit' | 'quote' | 'creos' | 'installation' | 'raccordement' | 'completed';
 
 export type NextAction =
   | 'Call client'
@@ -7,6 +7,7 @@ export type NextAction =
   | 'Send CREOS documents'
   | 'Request deposit'
   | 'Plan installation date'
+  | 'Schedule CREOS raccordement'
   | 'Close project';
 
 export type ProjectOwner = 'Sales' | 'Admin' | 'Team';

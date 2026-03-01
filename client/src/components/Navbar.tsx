@@ -10,7 +10,7 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/70 border-b border-white/50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group cursor-pointer">
+        <Link href="/dashboard" className="flex items-center gap-2 group cursor-pointer">
           <div className="h-10 w-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform">
             <Sun className="h-6 w-6 fill-yellow-300 stroke-white" />
           </div>
@@ -23,9 +23,9 @@ export function Navbar() {
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
-          <Link href="/" className={cn(
+          <Link href="/dashboard" className={cn(
             "text-sm font-medium transition-colors hover:text-primary flex items-center gap-2",
-            location === "/" ? "text-primary font-bold" : "text-muted-foreground"
+            location === "/dashboard" ? "text-primary font-bold" : "text-muted-foreground"
           )}>
             <LayoutDashboard className="h-4 w-4" />
             Tableau de bord

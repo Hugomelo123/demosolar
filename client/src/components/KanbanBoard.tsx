@@ -17,11 +17,12 @@ import { ToastAction } from '@/components/ui/toast';
 const EMPTY_ARRAY: Project[] = [];
 
 const COLUMNS: { id: ProjectStatus; title: string; color: string }[] = [
-  { id: 'lead', title: 'Lead', color: 'bg-slate-100' },
-  { id: 'visit', title: 'Visite planifiée', color: 'bg-blue-50' },
-  { id: 'quote', title: 'Devis envoyé', color: 'bg-amber-50' },
-  { id: 'creos', title: 'CREOS en attente', color: 'bg-purple-50' },
+  { id: 'lead', title: 'Prospection', color: 'bg-slate-100' },
+  { id: 'visit', title: 'Visite technique', color: 'bg-blue-50' },
+  { id: 'quote', title: 'Devis + KlimaBonus', color: 'bg-amber-50' },
+  { id: 'creos', title: 'Autorisation CREOS', color: 'bg-purple-50' },
   { id: 'installation', title: 'Installation', color: 'bg-emerald-50' },
+  { id: 'raccordement', title: 'Raccordement CREOS', color: 'bg-indigo-50' },
   { id: 'completed', title: 'Terminé', color: 'bg-slate-200' },
 ];
 

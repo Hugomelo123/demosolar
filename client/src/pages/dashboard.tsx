@@ -15,7 +15,7 @@ export default function Dashboard() {
     return {
       newLeads: projects.filter(p => p.status === 'lead').length,
       quotesSent: projects.filter(p => p.status === 'quote').length,
-      creosOrLater: projects.filter(p => p.status === 'creos' || p.status === 'installation' || p.status === 'completed').length,
+      creosOrLater: projects.filter(p => p.status === 'creos' || p.status === 'installation' || p.status === 'raccordement' || p.status === 'completed').length,
       pipelineValue: projects.reduce((acc, p) => acc + p.value, 0),
       valueInPipeline: inPipeline.reduce((acc, p) => acc + p.value, 0),
       valueStuck14: inPipeline.filter(p => p.daysInStage >= 14).reduce((acc, p) => acc + p.value, 0),

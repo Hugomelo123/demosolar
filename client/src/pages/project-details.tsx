@@ -41,7 +41,7 @@ export default function ProjectDetails() {
     setVisitOpen(false);
   };
 
-  const steps = ['lead', 'visit', 'quote', 'creos', 'installation', 'completed'];
+  const steps = ['lead', 'visit', 'quote', 'creos', 'installation', 'raccordement', 'completed'];
   const currentStepIndex = steps.indexOf(project.status);
 
   return (
@@ -52,7 +52,7 @@ export default function ProjectDetails() {
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-3xl font-bold text-slate-900">{project.clientName}</h1>
             <Badge variant="outline" className="text-base px-3 py-1 bg-white border-slate-300">
-                {({ lead: opsCopy.stepLead, visit: opsCopy.stepVisit, quote: opsCopy.stepQuote, creos: opsCopy.stepCreos, installation: opsCopy.stepInstallation, completed: opsCopy.stepCompleted } as Record<string, string>)[project.status] ?? project.status}
+                {({ lead: opsCopy.stepLead, visit: opsCopy.stepVisit, quote: opsCopy.stepQuote, creos: opsCopy.stepCreos, installation: opsCopy.stepInstallation, raccordement: opsCopy.stepRaccordement, completed: opsCopy.stepCompleted } as Record<string, string>)[project.status] ?? project.status}
             </Badge>
           </div>
           <div className="flex items-center text-muted-foreground gap-2">
@@ -85,6 +85,7 @@ export default function ProjectDetails() {
               quote: opsCopy.stepQuote,
               creos: opsCopy.stepCreos,
               installation: opsCopy.stepInstallation,
+              raccordement: opsCopy.stepRaccordement,
               completed: opsCopy.stepCompleted,
             };
             return (
