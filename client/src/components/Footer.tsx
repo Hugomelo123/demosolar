@@ -30,7 +30,7 @@ export function Footer() {
             LinkedIn
           </a>
           <a
-            href="mailto:hugo.melo@example.com"
+            href="mailto:hugo1297@gmail.com"
             className="flex items-center gap-1.5 hover:text-emerald-600 transition-colors"
           >
             <Mail className="h-4 w-4" />
