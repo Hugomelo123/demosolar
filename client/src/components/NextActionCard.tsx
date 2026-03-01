@@ -73,7 +73,7 @@ export function NextActionCard({ project }: NextActionCardProps) {
             <Phone className="h-4 w-4" /> {opsCopy.markContacted}
         </Button>
         
-        {project.status === 'installation' ? (
+        {(project.status === 'installation' || project.status === 'raccordement') ? (
              <Button className="gap-2" onClick={() => setLocation(`/install/${project.id}`)}>
                 <CheckCircle className="h-4 w-4" /> {opsCopy.openInstallChecklist}
              </Button>
