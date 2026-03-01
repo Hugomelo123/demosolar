@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { Project, ProjectStatus } from '@/types';
 import { useProjects } from './Providers';
@@ -11,6 +11,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { Link } from 'wouter';
 import { nextActionToLabel } from './NextActionCard';
 import { opsCopy } from '@/config/opsCopy';
+import { toast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 
 const EMPTY_ARRAY: Project[] = [];
 
@@ -91,6 +93,7 @@ const DroppableColumn = React.memo(function DroppableColumn({ column, projects }
 export function KanbanBoard() {
   const { projects, moveProject } = useProjects();
   const [activeId, setActiveId] = useState<string | null>(null);
+  const dragStartRef = useRef<{ id: string; status: ProjectStatus; name: string } | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -98,8 +101,13 @@ export function KanbanBoard() {
   );
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
-  }, []);
+    const projectId = event.active.id as string;
+    const project = projects.find(p => p.id === projectId);
+    if (project) {
+      dragStartRef.current = { id: projectId, status: project.status, name: project.clientName };
+    }
+    setActiveId(projectId);
+  }, [projects]);
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
@@ -107,10 +115,24 @@ export function KanbanBoard() {
       const projectId = active.id as string;
       const newStatus = over.id as ProjectStatus;
       if (COLUMNS.some(c => c.id === newStatus)) {
+        const prev = dragStartRef.current;
+        const columnTitle = COLUMNS.find(c => c.id === newStatus)?.title ?? newStatus;
         moveProject(projectId, newStatus);
+        if (prev && prev.id === projectId && prev.status !== newStatus) {
+          const prevStatus = prev.status;
+          toast({
+            title: `${prev.name} → ${columnTitle}`,
+            action: (
+              <ToastAction altText="Desfazer" onClick={() => moveProject(projectId, prevStatus)}>
+                Desfazer
+              </ToastAction>
+            ),
+          });
+        }
       }
     }
     setActiveId(null);
+    dragStartRef.current = null;
   }, [moveProject]);
 
   const projectsByColumn = useMemo(() =>

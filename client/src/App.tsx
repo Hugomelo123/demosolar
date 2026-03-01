@@ -11,6 +11,7 @@ const Dashboard = React.lazy(() => import("@/pages/dashboard"));
 const QuotePage = React.lazy(() => import("@/pages/quote"));
 const ProjectDetails = React.lazy(() => import("@/pages/project-details"));
 const InstallChecklistPage = React.lazy(() => import("@/pages/install-checklist"));
+const AnalyticsPage = React.lazy(() => import("@/pages/analytics"));
 
 function PageFallback() {
   return (
@@ -26,6 +27,7 @@ function Router() {
       <Suspense fallback={<PageFallback />}>
         <Switch>
           <Route path="/" component={Dashboard} />
+          <Route path="/analytics" component={AnalyticsPage} />
           <Route path="/quote" component={QuotePage} />
           <Route path="/projects/:id" component={ProjectDetails} />
           <Route path="/install/:id" component={InstallChecklistPage} />

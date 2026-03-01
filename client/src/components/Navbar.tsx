@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { Sun, Plus, LayoutDashboard } from "lucide-react";
+import { Sun, Plus, LayoutDashboard, BarChart2 } from "lucide-react";
 import { opsCopy } from "@/config/opsCopy";
 
 export function Navbar() {
@@ -29,6 +29,13 @@ export function Navbar() {
           )}>
             <LayoutDashboard className="h-4 w-4" />
             Tableau de bord
+          </Link>
+          <Link href="/analytics" className={cn(
+            "text-sm font-medium transition-colors hover:text-primary flex items-center gap-2",
+            location === "/analytics" ? "text-primary font-bold" : "text-muted-foreground"
+          )}>
+            <BarChart2 className="h-4 w-4" />
+            Analytics
           </Link>
           <Link href="/quote" className={cn(
             "text-sm font-medium transition-colors hover:text-primary flex items-center gap-2",
