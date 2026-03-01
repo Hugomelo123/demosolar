@@ -5,7 +5,7 @@
 
 export const demo = {
   companyName: 'SolarOps Luxembourg',
-  consoleTagline: 'Console opérations',
+  consoleTagline: 'Gestion de chantiers',
   userName: 'Hugo M.',
   userRole: 'Directeur Commercial',
   /** Nome do subsídio (ex. PDF, copy) */

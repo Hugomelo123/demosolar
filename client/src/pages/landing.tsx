@@ -59,7 +59,7 @@ export default function Landing() {
               SolarOps
             </span>
             <span className="text-[10px] text-slate-400 font-medium -mt-0.5 block">
-              Console opérations · Luxembourg
+              Gestion de chantiers · Luxembourg
             </span>
           </div>
         </div>
