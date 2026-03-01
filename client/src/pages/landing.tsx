@@ -134,7 +134,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="text-center py-6 text-xs text-slate-400 border-t border-slate-100">
-        Demo construit en 4 jours · Données fictives · Pas un produit commercial
+        Demo construit en 1 jour · Données fictives · Pas un produit commercial
       </footer>
     </div>
   );
