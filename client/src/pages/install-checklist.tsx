@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRoute } from 'wouter';
+import { useRoute, useLocation } from 'wouter';
 import { useProjects } from '@/components/Providers';
 import { ChecklistSection } from '@/components/ChecklistSection';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -11,7 +11,8 @@ import { opsCopy } from '@/config/opsCopy';
 
 export default function InstallChecklistPage() {
   const [match, params] = useRoute('/install/:id');
-  const { projects } = useProjects();
+  const { projects, moveProject } = useProjects();
+  const [, navigate] = useLocation();
 
   if (!match || !params) return <NotFound />;
 
@@ -55,7 +56,13 @@ export default function InstallChecklistPage() {
         </CardContent>
       </Card>
 
-      <ChecklistSection projectId={project.id} />
+      <ChecklistSection
+        projectId={project.id}
+        onComplete={() => {
+          moveProject(project.id, 'raccordement');
+          navigate(`/projects/${project.id}`);
+        }}
+      />
     </div>
   );
 }

@@ -103,9 +103,10 @@ function SimpleCheckbox({ checked, onCheckedChange, label }: { checked: boolean;
 
 interface ChecklistSectionProps {
   projectId: string;
+  onComplete?: () => void;
 }
 
-export function ChecklistSection({ projectId }: ChecklistSectionProps) {
+export function ChecklistSection({ projectId, onComplete }: ChecklistSectionProps) {
   const defaultSections = getDefaultSections();
   const [sections, setSections] = useState<SectionsState>(() =>
     mergeWithPersisted(defaultSections, loadPersisted(projectId))
@@ -135,6 +136,7 @@ export function ChecklistSection({ projectId }: ChecklistSectionProps) {
 
   const handleComplete = () => {
     setCompleted(true);
+    onComplete?.();
   };
 
   return (

@@ -7,7 +7,6 @@ import { Slider } from './ui/slider';
 import { Switch } from './ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Button } from './ui/button';
-import { PriceListUpload } from './PriceListUpload';
 import { QuoteData } from '@/types';
 import { calculateKwp, calculateProduction, calculateKlimabonus, calculateCost, calculateAnnualSavings, calculatePayback, calculateNetCost, calculateNetCostRange, isMarginBelowMinimum, MIN_MARGIN_PERCENT } from '@/lib/calculations';
 import { generateQuotePDF } from '@/lib/pdf';
@@ -284,9 +283,6 @@ export function QuoteForm() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-200">
-              <PriceListUpload />
-            </div>
           </CardContent>
         </Card>
       </div>

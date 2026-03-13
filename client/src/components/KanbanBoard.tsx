@@ -124,8 +124,8 @@ export function KanbanBoard() {
           toast({
             title: `${prev.name} → ${columnTitle}`,
             action: (
-              <ToastAction altText="Desfazer" onClick={() => moveProject(projectId, prevStatus)}>
-                Desfazer
+              <ToastAction altText="Annuler" onClick={() => moveProject(projectId, prevStatus)}>
+                Annuler
               </ToastAction>
             ),
           });

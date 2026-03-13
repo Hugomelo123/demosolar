@@ -211,9 +211,11 @@ export default function ProjectDetails() {
                         </DialogContent>
                     </Dialog>
 
-                    <Button variant="outline" className="w-full justify-start gap-2 h-12" onClick={() => window.open(`tel:${project.phone}`)}>
+                    {project.phone && (
+                      <Button variant="outline" className="w-full justify-start gap-2 h-12" onClick={() => window.open(`tel:${project.phone}`)}>
                         <Phone className="h-4 w-4" /> {opsCopy.callClient} ({project.phone})
-                    </Button>
+                      </Button>
+                    )}
                 </CardContent>
             </Card>
 
