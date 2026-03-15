@@ -6,13 +6,24 @@ import { Link } from "wouter";
 import { Badge } from "./ui/badge";
 import { opsCopy } from "@/config/opsCopy";
 
+function daysSince(iso?: string, fallback = 0): number {
+  if (!iso) return fallback;
+  return Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
+}
+
 export function BottleneckAlert() {
   const { projects } = useProjects();
 
   const { creosStuck, quoteStuck, followUpNeeded, totalAlerts } = useMemo(() => {
-    const creosStuck = projects.filter(p => p.status === 'creos' && p.daysInStage > 21);
-    const quoteStuck = projects.filter(p => p.status === 'quote' && p.daysInStage > 14);
-    const followUpNeeded = projects.filter(p => p.lastContactDaysAgo > 7);
+    const creosStuck = projects.filter(p =>
+      p.status === 'creos' && daysSince(p.stageEnteredAt, p.daysInStage) > 21
+    );
+    const quoteStuck = projects.filter(p =>
+      p.status === 'quote' && daysSince(p.stageEnteredAt, p.daysInStage) > 14
+    );
+    const followUpNeeded = projects.filter(p =>
+      p.status !== 'completed' && daysSince(p.lastContactAt, p.lastContactDaysAgo) > 7
+    );
     return { creosStuck, quoteStuck, followUpNeeded, totalAlerts: creosStuck.length + quoteStuck.length + followUpNeeded.length };
   }, [projects]);
 
@@ -25,7 +36,7 @@ export function BottleneckAlert() {
           <AlertTriangle className="h-5 w-5 text-rose-600" />
           <AlertTitle className="text-rose-900 font-bold flex items-center gap-2">
             {opsCopy.creosDelayTitle}
-            <Badge variant="destructive" className="ml-2 bg-rose-200 text-rose-800 hover:bg-rose-300 border-0">{p.daysInStage} j</Badge>
+            <Badge variant="destructive" className="ml-2 bg-rose-200 text-rose-800 hover:bg-rose-300 border-0">{daysSince(p.stageEnteredAt, p.daysInStage)} j</Badge>
           </AlertTitle>
           <AlertDescription className="text-rose-800 mt-1 flex justify-between items-center">
             <span>{p.clientName} — {opsCopy.creosDelayDesc}</span>
@@ -41,7 +52,7 @@ export function BottleneckAlert() {
           <Clock className="h-5 w-5 text-amber-600" />
           <AlertTitle className="text-amber-900 font-bold flex items-center gap-2">
             {opsCopy.quoteStuckTitle}
-            <Badge variant="warning" className="ml-2 bg-amber-200 text-amber-800 hover:bg-amber-300 border-0">{p.daysInStage} j</Badge>
+            <Badge variant="warning" className="ml-2 bg-amber-200 text-amber-800 hover:bg-amber-300 border-0">{daysSince(p.stageEnteredAt, p.daysInStage)} j</Badge>
           </AlertTitle>
           <AlertDescription className="text-amber-800 mt-1 flex justify-between items-center">
             <span>{p.clientName} — {opsCopy.quoteStuckDesc}</span>

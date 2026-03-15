@@ -1,6 +1,11 @@
 import { Project } from "../types";
 import { subDays, addDays } from "date-fns";
 
+/** Builds stageEnteredAt / lastContactAt from the static day offsets in mock data */
+function ts(daysAgo: number): string {
+  return subDays(new Date(), daysAgo).toISOString();
+}
+
 export const initialProjects: Project[] = [
   {
     id: "1",
@@ -21,6 +26,8 @@ export const initialProjects: Project[] = [
     ],
     owner: "Sales",
     dueDate: addDays(new Date(), 5).toISOString().slice(0, 10),
+    stageEnteredAt: ts(14),
+    lastContactAt: ts(3),
   },
   {
     id: "2",
@@ -42,6 +49,8 @@ export const initialProjects: Project[] = [
     ],
     owner: "Admin",
     dueDate: addDays(new Date(), 3).toISOString().slice(0, 10),
+    stageEnteredAt: ts(22),
+    lastContactAt: ts(8),
   },
   {
     id: "3",
@@ -62,6 +71,8 @@ export const initialProjects: Project[] = [
     ],
     owner: "Sales",
     dueDate: addDays(new Date(), 2).toISOString().slice(0, 10),
+    stageEnteredAt: ts(2),
+    lastContactAt: ts(2),
   },
   {
     id: "4",
@@ -82,6 +93,8 @@ export const initialProjects: Project[] = [
     ],
     owner: "Team",
     dueDate: addDays(new Date(), 7).toISOString().slice(0, 10),
+    stageEnteredAt: ts(5),
+    lastContactAt: ts(5),
   },
   {
     id: "5",
@@ -103,6 +116,8 @@ export const initialProjects: Project[] = [
     ],
     owner: "Team",
     dueDate: addDays(new Date(), 1).toISOString().slice(0, 10),
+    stageEnteredAt: ts(4),
+    lastContactAt: ts(1),
   },
   {
     id: "6",
@@ -122,6 +137,8 @@ export const initialProjects: Project[] = [
       "Client très satisfait · demande d'avis Google envoyée · attestation KlimaBonus reçue",
     ],
     owner: "Admin",
+    stageEnteredAt: ts(10),
+    lastContactAt: ts(15),
   },
   {
     id: "7",
@@ -142,6 +159,8 @@ export const initialProjects: Project[] = [
     ],
     owner: "Sales",
     dueDate: addDays(new Date(), 4).toISOString().slice(0, 10),
+    stageEnteredAt: ts(3),
+    lastContactAt: ts(12),
   },
   {
     id: "8",
@@ -162,6 +181,8 @@ export const initialProjects: Project[] = [
     ],
     owner: "Sales",
     dueDate: addDays(new Date(), 3).toISOString().slice(0, 10),
+    stageEnteredAt: ts(1),
+    lastContactAt: ts(1),
   },
   {
     id: "9",
@@ -182,6 +203,8 @@ export const initialProjects: Project[] = [
     ],
     owner: "Team",
     dueDate: addDays(new Date(), 10).toISOString().slice(0, 10),
+    stageEnteredAt: ts(8),
+    lastContactAt: ts(6),
   },
   {
     id: "10",
@@ -202,6 +225,8 @@ export const initialProjects: Project[] = [
     ],
     owner: "Admin",
     dueDate: addDays(new Date(), 14).toISOString().slice(0, 10),
+    stageEnteredAt: ts(20),
+    lastContactAt: ts(4),
   },
   {
     id: "11",
@@ -223,6 +248,8 @@ export const initialProjects: Project[] = [
     ],
     owner: "Team",
     dueDate: addDays(new Date(), 6).toISOString().slice(0, 10),
+    stageEnteredAt: ts(5),
+    lastContactAt: ts(2),
   },
   {
     id: "12",
@@ -243,5 +270,7 @@ export const initialProjects: Project[] = [
     ],
     owner: "Sales",
     dueDate: addDays(new Date(), 7).toISOString().slice(0, 10),
+    stageEnteredAt: ts(16),
+    lastContactAt: ts(9),
   },
 ];

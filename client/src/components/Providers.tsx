@@ -29,8 +29,15 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount — v2 adds stageEnteredAt/lastContactAt
   useEffect(() => {
+    const version = localStorage.getItem('solarops_version');
+    if (version !== '2') {
+      // Clear stale data that lacks timestamp fields
+      localStorage.removeItem('solarops_projects');
+      localStorage.setItem('solarops_version', '2');
+      return;
+    }
     const saved = localStorage.getItem('solarops_projects');
     if (saved) {
       try {
@@ -62,7 +69,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
 
   const moveProject = useCallback((id: string, status: ProjectStatus) => {
     setProjects(prev => prev.map(p =>
-      p.id === id ? { ...p, status, daysInStage: 0 } : p
+      p.id === id ? { ...p, status, daysInStage: 0, stageEnteredAt: new Date().toISOString() } : p
     ));
   }, []);
 
@@ -96,7 +103,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
 
   const markContacted = useCallback((id: string) => {
     setProjects(prev => prev.map(p =>
-      p.id === id ? { ...p, lastContactDaysAgo: 0 } : p
+      p.id === id ? { ...p, lastContactDaysAgo: 0, lastContactAt: new Date().toISOString() } : p
     ));
   }, []);
 

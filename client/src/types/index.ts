@@ -31,6 +31,10 @@ export interface Project {
   owner?: ProjectOwner;
   /** Due date for next step (ISO string) */
   dueDate?: string;
+  /** ISO timestamp when the project entered its current stage */
+  stageEnteredAt?: string;
+  /** ISO timestamp of last client contact */
+  lastContactAt?: string;
 }
 
 export interface QuoteData {
