@@ -1,17 +1,19 @@
 // ─── Demo business rules (Luxembourg-inspired, simplified for quote simulation) ───
 // kWp from roof area: ~0.17 kWp/m² (typical panels), 1 decimal
 // Production: ~1150 kWh/kWp/year (Luxembourg)
-// Klimabonus (simplified): base €9,300 for ≤15 kWp; above 15 kWp: +€620/kWp; battery +€2,250
+// Klimabonus 2026 (simplifié): maximum €10,000 à 15 kWc; au-dessus 15 kWc: +€667/kWp; batterie +€2,250 (max 9 kWh)
+// Préfinancement direct depuis le 4 janvier 2026: déduit de la facture installateur
+// TVA réduite 3% sur toutes les installations PV (depuis 01/01/2023)
 // Install: Basic €2,100/kWp, Premium €2,400/kWp. Battery add-on ~€6,500 (demo)
 // Savings: % of annual bill (low 35%, normal 45%, high 55%)
 // Quote range: show "from X to Y €" so the company is not bound to a single price (~12% band)
 
 const AREA_TO_KWP_FACTOR = 0.17;
 const PRODUCTION_KWH_PER_KWP = 1150;
-const KLIMABONUS_BASE_EUR = 9300;
+const KLIMABONUS_BASE_EUR = 10000; // 2026: max €10,000 à 15 kWc (was €9,300 in 2024)
 const KLIMABONUS_KWP_THRESHOLD = 15;
-const KLIMABONUS_EUR_PER_KWP_ABOVE = 620;
-const KLIMABONUS_BATTERY_EUR = 2250;
+const KLIMABONUS_EUR_PER_KWP_ABOVE = 667; // 2026: €667/kWp above 15 kWc (was €620)
+const KLIMABONUS_BATTERY_EUR = 2250; // max at 9 kWh battery capacity
 const RATE_BASIC_EUR_PER_KWP = 2100;
 const RATE_PREMIUM_EUR_PER_KWP = 2400;
 const SAVINGS_MULTIPLIERS = { low: 0.35, normal: 0.45, high: 0.55 } as const;
