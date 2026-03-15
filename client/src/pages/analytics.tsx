@@ -112,39 +112,48 @@ export default function Analytics() {
       {/* Funnel + At-risk table */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {/* Visual funnel */}
+        {/* Pipeline stages table */}
         <Card className="border-white/60 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold text-slate-700">Funil de conversion</CardTitle>
+            <CardTitle className="text-base font-semibold text-slate-700">Vue par étape</CardTitle>
           </CardHeader>
-          <CardContent className="pt-2 space-y-1.5">
-            {data.funnelData.map((s, i) => {
-              const widthPct = Math.max(100 - i * 11, 30);
-              const rate = i < data.conversionRates.length ? data.conversionRates[i].rate : null;
-              const rateColor = rate === null ? '' : rate >= 70 ? 'text-emerald-600' : rate >= 40 ? 'text-amber-500' : 'text-red-500';
-              return (
-                <div key={s.id} className="flex flex-col items-center">
-                  <div style={{ width: `${widthPct}%` }} className="relative">
-                    <div
-                      className="h-9 rounded-lg flex items-center justify-between px-3 text-white text-xs font-semibold shadow-sm w-full"
-                      style={{ backgroundColor: s.color }}
-                    >
-                      <span>{s.label}</span>
-                      <span className="flex items-center gap-2">
-                        <span className="bg-white/20 px-1.5 py-0.5 rounded text-[11px]">{s.count} proj.</span>
-                        <span className="text-white/75 text-[11px]">{formatCurrency(s.value)}</span>
-                      </span>
-                    </div>
+          <CardContent className="pt-0">
+            <div className="divide-y divide-slate-100">
+              {data.funnelData.map(s => (
+                <div key={s.id} className="py-3 flex items-center gap-3">
+                  {/* Color dot + label */}
+                  <div className="flex items-center gap-2 w-28 flex-shrink-0">
+                    <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: s.color }} />
+                    <span className="text-sm font-medium text-slate-700 truncate">{s.label}</span>
                   </div>
-                  {rate !== null && (
-                    <div className="flex items-center gap-1 my-0.5">
-                      <span className="text-slate-300 text-[10px]">↓</span>
-                      <span className={`text-[10px] font-bold ${rateColor}`}>{rate}%</span>
-                    </div>
-                  )}
+                  {/* Count bubble */}
+                  <span
+                    className="text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: s.color + '22', color: s.color }}
+                  >
+                    {s.count}
+                  </span>
+                  {/* Progress bar */}
+                  <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${data.maxCount > 0 ? (s.count / data.maxCount) * 100 : 0}%`,
+                        backgroundColor: s.color,
+                        opacity: 0.75,
+                      }}
+                    />
+                  </div>
+                  {/* Value + avg days */}
+                  <div className="text-right flex-shrink-0 w-28">
+                    <p className="text-sm font-semibold text-slate-800">{formatCurrency(s.value)}</p>
+                    {s.avgDays > 0 && (
+                      <p className="text-[11px] text-slate-400">{s.avgDays}j moy.</p>
+                    )}
+                  </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </CardContent>
         </Card>
 
