@@ -166,7 +166,7 @@ export default function Landing() {
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <h2 className="text-lg font-bold">Hugo Melo</h2>
                   <span className="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-medium">
-                    Candidat Opérations &amp; Digital · Luxembourg
+                    Candidat Coordination Opérationnelle · Luxembourg
                   </span>
                 </div>
                 <p className="text-slate-300 text-sm leading-relaxed mb-4">
@@ -205,7 +205,7 @@ export default function Landing() {
               </div>
               {/* Skills tags */}
               <div className="hidden lg:flex flex-col gap-2 flex-shrink-0">
-                {['React · TypeScript', 'Ops &amp; Process Design', 'Marché Luxembourg', 'PDF · Kanban · Analytics'].map(tag => (
+                {['Analyse terrain', 'Outils digitaux', 'Marché Luxembourg', 'Résolution de problèmes'].map(tag => (
                   <span key={tag} className="text-[10px] bg-white/5 border border-white/10 text-slate-300 px-2.5 py-1 rounded-md text-center"
                     dangerouslySetInnerHTML={{ __html: tag }}
                   />
