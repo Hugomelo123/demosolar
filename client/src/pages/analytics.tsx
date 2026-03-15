@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList,
 } from 'recharts';
-import { TrendingUp, Euro, Target, Clock } from 'lucide-react';
+import { TrendingUp, Euro, Target, Clock, AlertTriangle } from 'lucide-react';
 import { ProjectStatus } from '@/types';
 
 const STAGE_META: { id: ProjectStatus; label: string; color: string }[] = [
@@ -18,10 +18,16 @@ const STAGE_META: { id: ProjectStatus; label: string; color: string }[] = [
   { id: 'completed',      label: 'Terminé',        color: '#475569' },
 ];
 
+function conversionColor(rate: number) {
+  if (rate >= 70) return 'text-emerald-600 bg-emerald-50 border-emerald-200';
+  if (rate >= 40) return 'text-amber-600 bg-amber-50 border-amber-200';
+  return 'text-red-500 bg-red-50 border-red-200';
+}
+
 export default function Analytics() {
   const { projects } = useProjects();
 
-  const { funnelData, totalPipeline, avgDeal, completedValue, stuckCount } = useMemo(() => {
+  const { funnelData, totalPipeline, avgDeal, completedValue, stuckCount, stuckValue, maxCount } = useMemo(() => {
     const funnelData = STAGE_META.map(s => {
       const sp = projects.filter(p => p.status === s.id);
       return {
@@ -35,8 +41,11 @@ export default function Analytics() {
     const totalPipeline = projects.reduce((acc, p) => acc + p.value, 0);
     const avgDeal = projects.length ? Math.round(totalPipeline / projects.length) : 0;
     const completedValue = projects.filter(p => p.status === 'completed').reduce((acc, p) => acc + p.value, 0);
-    const stuckCount = projects.filter(p => p.status !== 'completed' && p.daysInStage >= 14).length;
-    return { funnelData, totalPipeline, avgDeal, completedValue, stuckCount };
+    const stuck = projects.filter(p => p.status !== 'completed' && p.daysInStage >= 14);
+    const stuckCount = stuck.length;
+    const stuckValue = stuck.reduce((acc, p) => acc + p.value, 0);
+    const maxCount = Math.max(...funnelData.map(s => s.count), 1);
+    return { funnelData, totalPipeline, avgDeal, completedValue, stuckCount, stuckValue, maxCount };
   }, [projects]);
 
   const conversionRates = useMemo(() =>
@@ -46,6 +55,12 @@ export default function Analytics() {
     [funnelData]
   );
 
+  const slowestStage = useMemo(() => {
+    const active = funnelData.slice(0, 6).filter(s => s.count > 0);
+    if (!active.length) return null;
+    return active.reduce((prev, curr) => curr.avgDays > prev.avgDays ? curr : prev);
+  }, [funnelData]);
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="rounded-2xl bg-white/80 border border-slate-200/80 shadow-sm p-6 md:p-8">
@@ -53,12 +68,13 @@ export default function Analytics() {
         <p className="text-slate-500 text-sm">Vue d'ensemble du pipeline commercial · données en temps réel</p>
       </div>
 
-      {/* 4 KPI cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 5 KPI cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <SummaryCard label="Valeur pipeline" value={formatCurrency(totalPipeline)} icon={<TrendingUp className="h-5 w-5 text-emerald-500" />} bg="bg-emerald-50" />
         <SummaryCard label="Ticket moyen" value={formatCurrency(avgDeal)} icon={<Euro className="h-5 w-5 text-blue-500" />} bg="bg-blue-50" />
         <SummaryCard label="Projets clôturés" value={formatCurrency(completedValue)} icon={<Target className="h-5 w-5 text-purple-500" />} bg="bg-purple-50" />
         <SummaryCard label="Bloqués +14 jours" value={String(stuckCount)} icon={<Clock className="h-5 w-5 text-amber-500" />} bg="bg-amber-50" suffix="projets" />
+        <SummaryCard label="Valeur bloquée" value={formatCurrency(stuckValue)} icon={<AlertTriangle className="h-5 w-5 text-red-500" />} bg="bg-red-50" />
       </div>
 
       {/* Horizontal bar — value per stage */}
@@ -99,38 +115,51 @@ export default function Analytics() {
         </CardContent>
       </Card>
 
-      {/* Pipeline flow with conversion rates */}
+      {/* Funnel with proportional bars + color-coded conversion rates */}
       <Card className="border-white/60 shadow-sm">
         <CardHeader className="pb-0">
-          <CardTitle className="text-base font-semibold text-slate-700">Distribution · taux de progression</CardTitle>
+          <CardTitle className="text-base font-semibold text-slate-700">Funil de conversion</CardTitle>
         </CardHeader>
         <CardContent className="pt-6 pb-4">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            {funnelData.map((s, i) => (
-              <React.Fragment key={s.stage}>
-                <div className="flex flex-col items-center gap-1.5 min-w-[68px]">
-                  <div
-                    className="h-14 w-14 rounded-full flex items-center justify-center text-white font-bold text-xl shadow"
-                    style={{ backgroundColor: s.color }}
-                  >
-                    {s.count}
+          <div className="space-y-2">
+            {funnelData.map((s, i) => {
+              const widthPct = maxCount > 0 ? Math.max((s.count / maxCount) * 100, 8) : 8;
+              const rate = i < conversionRates.length ? conversionRates[i].rate : null;
+              return (
+                <div key={s.stage}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-semibold text-slate-500 w-20 text-right shrink-0">{s.stage}</span>
+                    <div className="flex-1 relative h-8 bg-slate-50 rounded-lg overflow-hidden">
+                      <div
+                        className="h-full rounded-lg flex items-center px-3 transition-all duration-500"
+                        style={{ width: `${widthPct}%`, backgroundColor: s.color, opacity: 0.85 }}
+                      >
+                        <span className="text-white text-xs font-bold whitespace-nowrap">
+                          {s.count} proj.
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-xs text-slate-400 w-20 shrink-0">{formatCurrency(s.value)}</span>
                   </div>
-                  <span className="text-xs font-semibold text-slate-600 text-center">{s.stage}</span>
-                  <span className="text-[11px] text-slate-400 text-center">{formatCurrency(s.value)}</span>
+                  {rate !== null && (
+                    <div className="flex items-center gap-3 my-1">
+                      <span className="w-20" />
+                      <div className="flex-1 flex items-center gap-1.5 pl-2">
+                        <span className="text-slate-200 text-xs">↓</span>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${conversionColor(rate)}`}>
+                          {rate}% passage
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                {i < funnelData.length - 1 && (
-                  <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-xs font-bold text-slate-500">{conversionRates[i].rate}%</span>
-                    <span className="text-slate-300 text-base">→</span>
-                  </div>
-                )}
-              </React.Fragment>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
 
-      {/* Avg days in stage — bar chart */}
+      {/* Avg days in stage */}
       <Card className="border-white/60 shadow-sm">
         <CardHeader className="pb-0">
           <CardTitle className="text-base font-semibold text-slate-700">Jours moyens par étape (hors terminé)</CardTitle>
@@ -156,6 +185,11 @@ export default function Analytics() {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
+          {slowestStage && (
+            <p className="text-xs text-slate-400 mt-3 text-center">
+              Étape la plus longue : <span className="font-semibold text-slate-600">{slowestStage.stage}</span> avec {slowestStage.avgDays} jours en moyenne
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>
