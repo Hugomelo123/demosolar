@@ -8,18 +8,18 @@ import {
 const features = [
   {
     icon: <Kanban className="h-4 w-4" />,
-    title: 'Pipeline Kanban — 7 étapes',
+    title: 'Pipeline Kanban en 7 étapes',
     desc: 'De la prospection à la mise en service. Glisser-déposer avec annulation instantanée.',
   },
   {
     icon: <FileText className="h-4 w-4" />,
     title: 'Devis + KlimaBonus 2026',
-    desc: 'Calcul automatique subvention (max €10,000 à 15 kWc), fourchette indicative, génération PDF client.',
+    desc: 'Calcul automatique de la subvention (max €10,000 à 15 kWc), fourchette indicative et génération PDF client.',
   },
   {
     icon: <Bell className="h-4 w-4" />,
     title: 'Alertes goulots d\'étranglement',
-    desc: 'CREOS bloqué, devis sans réponse, relances en retard — identifiés automatiquement.',
+    desc: 'CREOS bloqué, devis sans réponse, relances en retard : tout est identifié automatiquement.',
   },
   {
     icon: <BarChart2 className="h-4 w-4" />,
@@ -29,7 +29,7 @@ const features = [
   {
     icon: <CheckSquare className="h-4 w-4" />,
     title: 'Checklist d\'installation',
-    desc: 'Pré-install, jour J, raccordement CREOS — suivi structuré par projet.',
+    desc: 'Pré-install, jour J, raccordement CREOS. Suivi structuré par projet.',
   },
   {
     icon: <Wallet className="h-4 w-4" />,
@@ -51,7 +51,7 @@ const funnelSteps = [
 const stats = [
   { value: '€10 000', label: 'KlimaBonus max 2026', sub: 'à 15 kWc' },
   { value: '3%', label: 'TVA réduite', sub: 'toutes installations PV' },
-  { value: '15 ans', label: 'Tarif injection garanti', sub: '0,1374 €/kWh — CREOS' },
+  { value: '15 ans', label: 'Tarif injection garanti', sub: '0,1374 €/kWh via CREOS' },
   { value: '6–12 ans', label: 'Payback estimé', sub: 'après aides + communes' },
 ];
 
@@ -96,7 +96,7 @@ export default function Landing() {
           </h1>
 
           <p className="text-lg text-slate-500 max-w-xl mx-auto mb-10 leading-relaxed">
-            Une console construite pour le processus luxembourgeois — de la prospection
+            Une console construite pour le processus luxembourgeois : de la prospection
             au raccordement CREOS, avec suivi KlimaBonus 2026 et alertes opérationnelles intégrées.
           </p>
 
@@ -171,9 +171,9 @@ export default function Landing() {
                 </div>
                 <p className="text-slate-300 text-sm leading-relaxed mb-4">
                   Ce demo a été construit pour démontrer ma capacité à analyser un processus métier,
-                  identifier les points de friction, et livrer une solution digitale fonctionnelle —
-                  avec des données réelles (CREOS, KlimaBonus, marchés luxembourgeois).
-                  Le secteur solaire est le contexte ; la compétence est transférable.
+                  identifier les points de friction et livrer une solution concrète avec des données
+                  réelles (CREOS, KlimaBonus, marché luxembourgeois).
+                  Le secteur solaire est le contexte. La compétence est transférable.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <a
@@ -220,7 +220,7 @@ export default function Landing() {
       <footer className="text-center py-6 text-xs text-slate-400 border-t border-slate-100 mt-8">
         Demo construit en 1 jour · Données fictives · Pas un produit commercial
         <span className="mx-2">·</span>
-        KlimaBonus 2026 — données Klima-Agence &amp; guichet.lu · Mars 2026
+        KlimaBonus 2026 : données Klima-Agence et guichet.lu · Mars 2026
       </footer>
     </div>
   );
