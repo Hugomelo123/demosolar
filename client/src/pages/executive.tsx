@@ -36,6 +36,7 @@ export default function ExecutiveDashboard() {
     totalRevenue, pipelineValue, totalKwp,
     conversionRate, avgDeal, ytdRevenue, ytdPct,
     teamPerformance, regionalData,
+    creosAvgDays, q1Pct,
   } = useMemo(() => {
     const completed = projects.filter(p => p.status === 'completed');
     const active    = projects.filter(p => p.status !== 'completed');
