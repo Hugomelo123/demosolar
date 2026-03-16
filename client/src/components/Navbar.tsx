@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { Sun, Plus, LayoutDashboard, BarChart2, Menu, X } from "lucide-react";
+import { Sun, Plus, LayoutDashboard, BarChart2, Menu, X, TrendingUp, Users, Settings } from "lucide-react";
 import { opsCopy } from "@/config/opsCopy";
 
 const navLinks = [
-  { href: '/dashboard', icon: <LayoutDashboard className="h-4 w-4" />, label: 'Tableau de bord' },
-  { href: '/analytics', icon: <BarChart2 className="h-4 w-4" />, label: 'Analytics' },
-  { href: '/quote', icon: <Plus className="h-4 w-4" />, label: 'Nouveau devis' },
+  { href: '/dashboard',  icon: <LayoutDashboard className="h-4 w-4" />, label: 'Tableau de bord' },
+  { href: '/analytics',  icon: <BarChart2 className="h-4 w-4" />,       label: 'Analytics' },
+  { href: '/executive',  icon: <TrendingUp className="h-4 w-4" />,      label: 'Direction' },
+  { href: '/team',       icon: <Users className="h-4 w-4" />,           label: 'Équipe' },
+  { href: '/quote',      icon: <Plus className="h-4 w-4" />,            label: 'Nouveau devis' },
+  { href: '/settings',   icon: <Settings className="h-4 w-4" />,        label: 'Paramètres' },
 ];
 
 export function Navbar() {
