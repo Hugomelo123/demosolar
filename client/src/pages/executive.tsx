@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useProjects } from '@/components/Providers';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,50 +11,95 @@ import {
   Target, Award, ArrowUpRight,
 } from 'lucide-react';
 
+// Simulated monthly revenue trend — no historical per-month data in demo
 const MONTHLY_REVENUE = [
-  { month: 'Sep',  revenue: 148000, projects: 6 },
-  { month: 'Oct',  revenue: 172000, projects: 7 },
-  { month: 'Nov',  revenue: 134000, projects: 5 },
-  { month: 'Déc',  revenue: 98000,  projects: 4 },
-  { month: 'Jan',  revenue: 165000, projects: 7 },
-  { month: 'Fév',  revenue: 189000, projects: 8 },
-  { month: 'Mar',  revenue: 214000, projects: 9 },
+  { month: 'Sep',  revenue: 148000 },
+  { month: 'Oct',  revenue: 172000 },
+  { month: 'Nov',  revenue: 134000 },
+  { month: 'Déc',  revenue: 98000  },
+  { month: 'Jan',  revenue: 165000 },
+  { month: 'Fév',  revenue: 189000 },
+  { month: 'Mar',  revenue: 214000 },
 ];
 
-const TEAM_PERFORMANCE = [
-  { name: 'Équipe Nord',  projects: 22, revenue: 310000, kwp: 287, color: '#10b981' },
-  { name: 'Équipe Sud',   projects: 18, revenue: 268000, kwp: 241, color: '#6366f1' },
-  { name: 'Équipe A',     projects: 31, revenue: 0,       kwp: 389, color: '#f59e0b' },
-  { name: 'Équipe B',     projects: 27, revenue: 0,       kwp: 318, color: '#3b82f6' },
-];
-
-const REGIONAL_DATA = [
-  { region: 'Luxembourg-Ville', projects: 18, share: 36 },
-  { region: 'Esch-sur-Alzette', projects: 12, share: 24 },
-  { region: 'Differdange',      projects: 8,  share: 16 },
-  { region: 'Dudelange',        projects: 7,  share: 14 },
-  { region: 'Autres',           projects: 5,  share: 10 },
-];
+const OWNER_COLORS: Record<string, string> = {
+  Sales: '#10b981',
+  Admin: '#6366f1',
+  Team:  '#f59e0b',
+};
 
 export default function ExecutiveDashboard() {
   const { projects } = useProjects();
 
-  const completed = projects.filter(p => p.status === 'completed');
-  const active    = projects.filter(p => p.status !== 'completed');
-  const atRisk    = active.filter(p => p.daysInStage >= 14 || p.lastContactDaysAgo >= 10);
+  const {
+    completed, active, atRisk,
+    totalRevenue, pipelineValue, totalKwp,
+    conversionRate, avgDeal, ytdRevenue, ytdPct,
+    teamPerformance, regionalData,
+  } = useMemo(() => {
+    const completed = projects.filter(p => p.status === 'completed');
+    const active    = projects.filter(p => p.status !== 'completed');
+    const atRisk    = active.filter(p => p.daysInStage >= 14 || p.lastContactDaysAgo >= 10);
 
-  const totalRevenue    = completed.reduce((a, p) => a + p.value, 0);
-  const pipelineValue   = active.reduce((a, p) => a + p.value, 0);
-  const totalKwp        = completed.reduce((a, p) => a + p.kwp, 0);
-  const conversionRate  = projects.length
-    ? Math.round((completed.length / projects.length) * 100) : 0;
-  const avgDeal         = projects.length
-    ? Math.round((totalRevenue + pipelineValue) / projects.length) : 0;
+    const totalRevenue  = completed.reduce((a, p) => a + p.value, 0);
+    const pipelineValue = active.reduce((a, p) => a + p.value, 0);
+    const totalKwp      = completed.reduce((a, p) => a + p.kwp, 0);
+    const conversionRate = projects.length
+      ? Math.round((completed.length / projects.length) * 100) : 0;
+    const avgDeal = projects.length
+      ? Math.round((totalRevenue + pipelineValue) / projects.length) : 0;
 
-  // YTD revenue = simulated sum
-  const ytdRevenue = MONTHLY_REVENUE.reduce((a, m) => a + m.revenue, 0);
-  const ytdTarget  = 1_800_000;
-  const ytdPct     = Math.min(Math.round((ytdRevenue / ytdTarget) * 100), 100);
+    // YTD = simulated monthly trend sum (no historical data in demo)
+    const ytdRevenue = MONTHLY_REVENUE.reduce((a, m) => a + m.revenue, 0);
+    const ytdTarget  = 1_800_000;
+    const ytdPct     = Math.min(Math.round((ytdRevenue / ytdTarget) * 100), 100);
+
+    // CREOS avg delay from real project data
+    const creosProjects = projects.filter(p => p.status === 'creos');
+    const creosAvgDays = creosProjects.length
+      ? Math.round(creosProjects.reduce((a, p) => a + p.daysInStage, 0) / creosProjects.length)
+      : 0;
+
+    // Q1 progress (pipeline closed this quarter = simulated % of ytd target)
+    const q1Pct = Math.min(Math.round((ytdRevenue * 0.27) / (1_800_000 / 4) * 100), 100);
+
+    // Team performance computed from real project owners
+    const teamPerformance = (['Sales', 'Admin', 'Team'] as const).map(owner => ({
+      name: owner,
+      projects: projects.filter(p => p.owner === owner).length,
+      value: projects.filter(p => p.owner === owner).reduce((a, p) => a + p.value, 0),
+      kwp: projects.filter(p => p.owner === owner).reduce((a, p) => a + p.kwp, 0),
+      color: OWNER_COLORS[owner],
+    }));
+
+    // Regional breakdown from real project addresses (first word of address as city proxy)
+    const cityMap: Record<string, number> = {};
+    projects.forEach(p => {
+      const parts = p.address.split(',');
+      const last = parts[parts.length - 1]?.trim() ?? parts[0]?.trim() ?? 'Inconnu';
+      const city = last.replace(/^L-\d{4}\s*/, '').trim() || 'Luxembourg';
+      cityMap[city] = (cityMap[city] ?? 0) + 1;
+    });
+    const sortedCities = Object.entries(cityMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+    const totalForShare = sortedCities.reduce((a, [, n]) => a + n, 0) || 1;
+    const regionalData = sortedCities.map(([region, count]) => ({
+      region,
+      projects: count,
+      share: Math.round((count / totalForShare) * 100),
+    }));
+
+    return {
+      completed, active, atRisk,
+      totalRevenue, pipelineValue, totalKwp,
+      conversionRate, avgDeal, ytdRevenue, ytdPct,
+      teamPerformance, regionalData,
+      creosAvgDays, q1Pct,
+    };
+  }, [projects]);
+
+  const ytdTarget = 1_800_000;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -131,7 +176,10 @@ export default function ExecutiveDashboard() {
         {/* Monthly revenue */}
         <Card className="border-white/60 shadow-sm">
           <CardHeader className="pb-0">
-            <CardTitle className="text-base font-semibold text-slate-700">Revenus mensuels</CardTitle>
+            <CardTitle className="text-base font-semibold text-slate-700">
+              Revenus mensuels
+              <span className="ml-2 text-xs font-normal text-slate-400">(tendance simulée)</span>
+            </CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
             <ResponsiveContainer width="100%" height={200}>
@@ -168,7 +216,7 @@ export default function ExecutiveDashboard() {
           </CardHeader>
           <CardContent className="pt-4">
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={TEAM_PERFORMANCE} margin={{ top: 10, right: 16, left: 0, bottom: 4 }}>
+              <BarChart data={teamPerformance} margin={{ top: 10, right: 16, left: 0, bottom: 4 }}>
                 <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <Tooltip
@@ -177,7 +225,7 @@ export default function ExecutiveDashboard() {
                   cursor={{ fill: '#f8fafc' }}
                 />
                 <Bar dataKey="projects" radius={[6, 6, 0, 0]} maxBarSize={48}>
-                  {TEAM_PERFORMANCE.map((e, i) => <Cell key={i} fill={e.color} fillOpacity={0.85} />)}
+                  {teamPerformance.map((e, i) => <Cell key={i} fill={e.color} fillOpacity={0.85} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -197,7 +245,7 @@ export default function ExecutiveDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0 space-y-3">
-            {REGIONAL_DATA.map(r => (
+            {regionalData.map(r => (
               <div key={r.region}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm font-medium text-slate-700">{r.region}</span>
@@ -231,16 +279,18 @@ export default function ExecutiveDashboard() {
                 value: atRisk.length > 0 ? `${formatCurrency(atRisk.reduce((a, p) => a + p.value, 0))} en jeu` : 'Aucun',
               },
               {
-                title: 'Objectif Q1 : 89%',
-                desc: 'Mars 2026 — en bonne voie pour atteindre la cible',
-                severity: 'green',
-                value: formatCurrency(214000),
+                title: `Objectif Q1 : ${q1Pct}%`,
+                desc: 'Mars 2026 — progression trimestrielle estimée',
+                severity: q1Pct >= 80 ? 'green' : q1Pct >= 50 ? 'amber' : 'red',
+                value: formatCurrency(Math.round(ytdRevenue * 0.27)),
               },
               {
-                title: 'Délai CREOS : +18 jours moy.',
-                desc: 'Temps moyen d\'attente autorisation réseau (baseline 14j)',
-                severity: 'amber',
-                value: '4j de retard',
+                title: creosAvgDays > 0
+                  ? `Délai CREOS : ${creosAvgDays} jours moy.`
+                  : 'Délai CREOS : aucun projet en cours',
+                desc: 'Temps moyen en étape CREOS (baseline 14j)',
+                severity: creosAvgDays === 0 ? 'green' : creosAvgDays > 21 ? 'red' : creosAvgDays > 14 ? 'amber' : 'green',
+                value: creosAvgDays > 14 ? `${creosAvgDays - 14}j de retard` : creosAvgDays > 0 ? 'Dans les délais' : '—',
               },
               {
                 title: 'Taux de conversion stable',

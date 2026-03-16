@@ -5,7 +5,7 @@ import { Project } from "@/types";
 export const FollowUpBadges = React.memo(function FollowUpBadges({ project }: { project: Project }) {
   const badges = [];
 
-  if (project.lastContactDaysAgo > 10) {
+  if (project.lastContactDaysAgo > 7) {
     badges.push(
       <Badge key="contact" variant="destructive" className="bg-rose-100 text-rose-700 hover:bg-rose-200 border-0">
         No contact {project.lastContactDaysAgo}d

@@ -18,6 +18,11 @@ const RATE_BASIC_EUR_PER_KWP = 2100;
 const RATE_PREMIUM_EUR_PER_KWP = 2400;
 const SAVINGS_MULTIPLIERS = { low: 0.35, normal: 0.45, high: 0.55 } as const;
 
+/** Battery add-on install cost (demo) */
+export const BATTERY_ADDON_EUR = 6500;
+/** Extra annual savings with battery (demo) */
+export const BATTERY_EXTRA_SAVINGS_EUR = 200;
+
 export function calculateKwp(areaM2: number): number {
   return Math.round(areaM2 * AREA_TO_KWP_FACTOR * 10) / 10;
 }

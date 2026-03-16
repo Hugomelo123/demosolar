@@ -30,19 +30,20 @@ describe('calculateProduction', () => {
 });
 
 describe('calculateKlimabonus', () => {
-  it('returns base 9300 for ≤15 kWp without battery', () => {
-    expect(calculateKlimabonus(10, false)).toBe(9300);
-    expect(calculateKlimabonus(15, false)).toBe(9300);
+  // 2026 rules: base €10 000 at ≤15 kWc; above 15 kWc: +€667/kWp; battery +€2 250
+  it('returns base 10000 for ≤15 kWp without battery', () => {
+    expect(calculateKlimabonus(10, false)).toBe(10000);
+    expect(calculateKlimabonus(15, false)).toBe(10000);
   });
 
-  it('adds 620 €/kWp above 15 kWp', () => {
-    expect(calculateKlimabonus(16, false)).toBe(9300 + 620); // 9920
-    expect(calculateKlimabonus(20, false)).toBe(9300 + 5 * 620); // 12400
+  it('adds 667 €/kWp above 15 kWp', () => {
+    expect(calculateKlimabonus(16, false)).toBe(10000 + 667); // 10667
+    expect(calculateKlimabonus(20, false)).toBe(10000 + 5 * 667); // 13335
   });
 
   it('adds 2250 for battery', () => {
-    expect(calculateKlimabonus(10, true)).toBe(9300 + 2250); // 11550
-    expect(calculateKlimabonus(16, true)).toBe(9300 + 620 + 2250); // 12170
+    expect(calculateKlimabonus(10, true)).toBe(10000 + 2250); // 12250
+    expect(calculateKlimabonus(16, true)).toBe(10000 + 667 + 2250); // 12917
   });
 });
 
@@ -78,11 +79,11 @@ describe('calculatePayback', () => {
 
 describe('calculateNetCost', () => {
   it('returns installCost - klimabonus when positive', () => {
-    expect(calculateNetCost(20000, 9300)).toBe(10700);
+    expect(calculateNetCost(20000, 10000)).toBe(10000);
   });
 
   it('never returns negative (max 0)', () => {
-    expect(calculateNetCost(8000, 9300)).toBe(0);
+    expect(calculateNetCost(8000, 10000)).toBe(0);
   });
 });
 

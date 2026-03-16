@@ -8,7 +8,7 @@ import { Switch } from './ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Button } from './ui/button';
 import { QuoteData } from '@/types';
-import { calculateKwp, calculateProduction, calculateKlimabonus, calculateCost, calculateAnnualSavings, calculatePayback, calculateNetCost, calculateNetCostRange, isMarginBelowMinimum, MIN_MARGIN_PERCENT } from '@/lib/calculations';
+import { calculateKwp, calculateProduction, calculateKlimabonus, calculateCost, calculateAnnualSavings, calculatePayback, calculateNetCost, calculateNetCostRange, isMarginBelowMinimum, MIN_MARGIN_PERCENT, BATTERY_ADDON_EUR, BATTERY_EXTRA_SAVINGS_EUR } from '@/lib/calculations';
 import { generateQuotePDF } from '@/lib/pdf';
 import { FileText, Send, Zap, Sun, Wallet, Battery, PlusCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
@@ -22,7 +22,7 @@ export function QuoteForm() {
   const [clientName, setClientName] = useState('');
 
   const [data, setData] = useState<QuoteData>({
-    address: '123 Route d\'Arlon, Luxembourg',
+    address: '',
     roofType: 'pitched',
     areaM2: 45,
     monthlyBill: 150,
@@ -46,11 +46,11 @@ export function QuoteForm() {
   useEffect(() => {
     const kwp = calculateKwp(data.areaM2);
     const production = calculateProduction(kwp);
-    const installCost = calculateCost(kwp, data.packageType) + (data.hasBattery ? 6500 : 0); // battery add-on ~€6,500
+    const installCost = calculateCost(kwp, data.packageType) + (data.hasBattery ? BATTERY_ADDON_EUR : 0);
     const klimabonus = calculateKlimabonus(kwp, data.hasBattery);
     const netCost = calculateNetCost(installCost, klimabonus); // never negative
     const { min: netCostMin, max: netCostMax, mid: netCostMid } = calculateNetCostRange(netCost);
-    const annualSavings = calculateAnnualSavings(data.monthlyBill, data.consumptionProfile) + (data.hasBattery ? 200 : 0); // extra with battery
+    const annualSavings = calculateAnnualSavings(data.monthlyBill, data.consumptionProfile) + (data.hasBattery ? BATTERY_EXTRA_SAVINGS_EUR : 0);
     const paybackYears = calculatePayback(netCostMid, annualSavings); // payback on midpoint of range
 
     setData(prev => ({

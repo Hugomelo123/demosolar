@@ -198,9 +198,11 @@ export default function ProjectDetails() {
                                     <Select value={tech} onValueChange={setTech}>
                                         <SelectTrigger><SelectValue placeholder={opsCopy.selectTechnician} /></SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Marc Weber">Marc Weber</SelectItem>
-                                            <SelectItem value="Jean Dupont">Jean Dupont</SelectItem>
-                                            <SelectItem value="Sarah Klein">Sarah Klein</SelectItem>
+                                            <SelectItem value="Klaus Braun">Klaus Braun</SelectItem>
+                                            <SelectItem value="Luca Ferreira">Luca Ferreira</SelectItem>
+                                            <SelectItem value="Mia Hoffmann">Mia Hoffmann</SelectItem>
+                                            <SelectItem value="Rui Santos">Rui Santos</SelectItem>
+                                            <SelectItem value="David Klein">David Klein</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>

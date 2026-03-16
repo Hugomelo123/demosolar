@@ -184,7 +184,7 @@ export const opsCopy = {
   stepRaccordement: 'Raccordement',
   stepCompleted: 'Terminé',
   /** PDF */
-  pdfSubsidyNote: 'Klimabonus 2026 (indicatif). Préfinancement possible : l\'installateur déduit la prime de la facture s\'il est agréé (Guichet.lu).',
+  pdfSubsidyNote: `${demo.subsidyName} 2026 (indicatif). Préfinancement possible : l'installateur déduit la prime de la facture s'il est agréé (Guichet.lu).`,
   pdfValidDays: 'Valable 14 jours',
   pdfTimeline: 'Délai : 6 à 10 semaines après accord CREOS',
 } as const;

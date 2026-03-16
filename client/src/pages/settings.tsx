@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Settings, Palette, MessageSquare, Building2, Globe,
@@ -14,37 +14,79 @@ const PRESET_COLORS = [
   { name: 'Cyan',     value: '#06b6d4' },
 ];
 
+const STORAGE_KEY = 'solarops_settings';
+
 const DEFAULT_TEMPLATES = {
   followUp: `Bonjour {{client}}, je vous contacte au sujet de votre projet solaire. Votre devis est disponible — n'hésitez pas à me contacter pour toute question. Cordialement, {{commercial}}`,
   creos: `Bonjour {{client}}, votre dossier CREOS est en cours de traitement (réf. {{ref}}). Nous vous tiendrons informé dès réception de l'autorisation. Cordialement, {{commercial}}`,
   install: `Bonjour {{client}}, votre installation est confirmée pour le {{date}}. Notre équipe arrivera entre 8h et 9h. Merci de libérer l'accès au toit. Cordialement, {{commercial}}`,
 };
 
+const DEFAULTS = {
+  companyName: 'SolarOps Luxembourg',
+  tagline: 'Gestion de chantiers',
+  userName: 'Hugo M.',
+  userRole: 'Directeur Commercial',
+  primaryColor: '#10b981',
+  currency: 'EUR',
+  subsidyName: 'Klimabonus',
+  operatorName: 'CREOS',
+  country: 'Luxembourg',
+  templates: DEFAULT_TEMPLATES,
+};
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return { ...DEFAULTS, ...JSON.parse(raw) };
+  } catch { /* ignore */ }
+  return DEFAULTS;
+}
+
 type Tab = 'identity' | 'appearance' | 'whatsapp' | 'region';
 
 export default function SettingsPage() {
   const [tab, setTab] = useState<Tab>('identity');
   const [saved, setSaved] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const initial = loadSettings();
 
   // Identity
-  const [companyName, setCompanyName] = useState('SolarOps Luxembourg');
-  const [tagline, setTagline] = useState('Gestion de chantiers');
-  const [userName, setUserName] = useState('Hugo M.');
-  const [userRole, setUserRole] = useState('Directeur Commercial');
+  const [companyName, setCompanyName] = useState(initial.companyName);
+  const [tagline, setTagline] = useState(initial.tagline);
+  const [userName, setUserName] = useState(initial.userName);
+  const [userRole, setUserRole] = useState(initial.userRole);
 
   // Appearance
-  const [primaryColor, setPrimaryColor] = useState('#10b981');
+  const [primaryColor, setPrimaryColor] = useState(initial.primaryColor);
 
   // WhatsApp templates
-  const [templates, setTemplates] = useState(DEFAULT_TEMPLATES);
+  const [templates, setTemplates] = useState(initial.templates);
 
   // Region
-  const [currency, setCurrency] = useState('EUR');
-  const [subsidyName, setSubsidyName] = useState('Klimabonus');
-  const [operatorName, setOperatorName] = useState('CREOS');
-  const [country, setCountry] = useState('Luxembourg');
+  const [currency, setCurrency] = useState(initial.currency);
+  const [subsidyName, setSubsidyName] = useState(initial.subsidyName);
+  const [operatorName, setOperatorName] = useState(initial.operatorName);
+  const [country, setCountry] = useState(initial.country);
+
+  // Debounced auto-save whenever any value changes
+  useEffect(() => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        companyName, tagline, userName, userRole,
+        primaryColor, currency, subsidyName, operatorName, country, templates,
+      }));
+    }, 600);
+    return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
+  }, [companyName, tagline, userName, userRole, primaryColor, currency, subsidyName, operatorName, country, templates]);
 
   function handleSave() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      companyName, tagline, userName, userRole,
+      primaryColor, currency, subsidyName, operatorName, country, templates,
+    }));
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   }
