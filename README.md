@@ -1,119 +1,168 @@
-# SolarOps Luxembourg — Demo Portfolio
+# SolarOps Luxembourg — Internal Operations Demo
 
-> **Portfolio demo construído por Hugo Melo para candidatura a empresas do setor solar no Luxemburgo.**
-> Mostra compreensão do negócio + competências full-stack (React 19, TypeScript, PDF, Kanban, testes unitários).
+> Demo created by Hugo Melo to show how I identify and solve operational problems inside solar companies in Luxembourg.
+
+<p align="left">
+  <img src="https://img.shields.io/badge/Status-Demo-blue" alt="Status Badge" />
+  <img src="https://img.shields.io/badge/Focus-Internal%20Operations-green" alt="Focus Badge" />
+  <img src="https://img.shields.io/badge/Market-Luxembourg-red" alt="Market Badge" />
+  <img src="https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Node.js-black" alt="Stack Badge" />
+</p>
 
 ---
 
-## Porquê este projeto?
+## Overview
 
-Estudei o mercado solar luxemburguês e identifiquei um problema operacional concreto: as equipas de vendas e instalação gerem leads, devis, CREOS e instalações com Excel, WhatsApp e papel. O resultado é pipeline invisível, gargalos CREOS que custam semanas, e erros de seguimento.
+In many solar companies, daily operations are still managed across Excel, WhatsApp, calls and paper.
 
-Esta consola resolve esse problema:
-- **Dashboard em 30 segundos** — pipeline total, valor, alertas CREOS, projetos sem contacto
-- **Devis em 5 minutos** — cálculo real com Klimabonus 2026, PDF profissional, fourchette indicativa
-- **Pipeline Kanban** — Lead → Visita → Devis → CREOS → Instalação → Terminado
-- **Checklist de instalação** — por projeto, 3 fases, persistido localmente
+This usually creates the same problems:
 
-O objetivo é mostrar que posso **ser contratado** para ajudar uma empresa solar a digitalizar e escalar as suas operações.
+- no clear pipeline visibility  
+- CREOS delays discovered too late  
+- information lost between teams  
+- weak follow-up on quotes and projects  
+- client-facing output that is too technical or too heavy  
+
+This demo is a simple example of how I would help structure those internal operations.
+
+---
+
+## Why this demo
+
+I studied the Luxembourg solar market and focused on one practical issue:
+
+Sales, admin and installation teams often work with fragmented information.  
+The company moves forward, but the process stays reactive instead of structured.
+
+The result is predictable:
+
+- blocked files stay invisible for too long  
+- next actions are not always clear  
+- quote follow-up depends too much on memory  
+- teams do extra work because the flow is not organized  
+- the client receives too much complexity and not enough clarity  
+
+---
+
+## What this demo shows
+
+This is **not a product** and **not a ready-to-deploy solution**.
+
+It is a portfolio demo that shows how I work inside a company:
+
+- start from a real operational problem  
+- identify the repeating pattern  
+- simplify the workflow  
+- organize the information  
+- build an internal tool adapted to the team  
+
+The objective is to demonstrate operational thinking, not to sell software.
+
+---
+
+## Core operational logic
+
+### Before
+- Excel + WhatsApp + calls  
+- fragmented project tracking  
+- manual follow-up  
+- reactive decisions  
+- difficult overview for management  
+
+### After
+- clear pipeline from lead to installation  
+- structured project follow-up  
+- visible delays and blocked steps  
+- simplified quote generation  
+- better internal visibility for next actions  
+
+---
+
+## Main features
+
+### 1. Dashboard in under 30 seconds
+Quick overview of:
+- total pipeline  
+- estimated pipeline value  
+- CREOS alerts  
+- projects without contact  
+- current project stages  
+
+### 2. Quote generation in minutes
+- real-time calculations  
+- indicative Klimabonus 2026 logic  
+- professional PDF output  
+- indicative price range instead of rigid fixed price  
+
+### 3. Kanban pipeline
+Clear internal flow:
+
+**Lead → Visit → Quote → CREOS → Installation → Done**
+
+This makes project status visible without searching across messages or files.
+
+### 4. Alert system
+Built to highlight common delays:
+- CREOS pending for too long  
+- quote sent but no movement  
+- project without contact for several days  
+
+### 5. Project detail page
+Each project includes:
+- current status  
+- notes  
+- next action  
+- visit scheduling  
+- WhatsApp templates  
+- internal follow-up structure  
+
+### 6. Installation checklist
+Per-project checklist with 3 phases:
+- before installation  
+- installation day  
+- after installation  
+
+Saved locally for quick demo usage.
+
+---
+
+## Example of the problem this demo addresses
+
+A quote is sent.  
+The client waits.  
+CREOS status is unclear.  
+Sales thinks admin is following.  
+Admin thinks sales already called.  
+Installation has no clear visibility on timing.
+
+Nothing is fully broken, but the company loses time because the process is not structured.
+
+This demo shows one way to reduce that noise.
+
+---
+
+## Approach
+
+My logic is always the same:
+
+1. observe the real workflow  
+2. identify where information gets lost  
+3. map the repeated bottlenecks  
+4. simplify the process  
+5. build a tool around the workflow, not around technology  
 
 ---
 
 ## Quick start
 
-**Requisitos:** Node.js 18+, npm.
+### Requirements
+- Node.js 18+  
+- npm  
+
+### Run locally
 
 ```bash
 git clone https://github.com/Hugomelo123/demosolar.git
 cd demosolar
 npm install
 npm run dev:client
-```
-
-Abrir **http://localhost:5002** — dashboard, pipeline e devis visíveis em menos de 30 segundos.
-
----
-
-## Funcionalidades
-
-| Funcionalidade | Descrição |
-|----------------|-----------|
-| **Devis em 5 min** | Formulário com cálculos em tempo real (kWp, Klimabonus, retorno); PDF profissional; fourchette indicativa. |
-| **Adicionar ao pipeline** | Converte o devis num projeto (coluna Devis Enviado); redireciona para detalhe. |
-| **Dashboard** | Métricas (leads, devis enviados, CREOS/instalação, valor pipeline); funil; Kanban. |
-| **Alertas** | CREOS >21 dias, devis >14 dias, sem contacto >7 dias — com links diretos. |
-| **Detalhe do projeto** | Stepper, notas, agendar visita, próxima ação, templates WhatsApp. |
-| **Checklist instalação** | Por projeto (pré / dia-de / pós instalação); estado guardado por projeto em `localStorage`. |
-
----
-
-## Scripts
-
-| Comando | Descrição |
-|---------|-----------|
-| `npm run dev:client` | Frontend apenas (Vite), http://localhost:5002 |
-| `npm run dev` | Full stack (cliente + servidor) |
-| `npm run build` | Build de produção |
-| `npm start` | Servidor de produção |
-| `npm test` | Testes unitários (Vitest) — cálculos e regras de negócio |
-| `npm run check` | Verificação TypeScript |
-
----
-
-## Modo demo
-
-- **Sem base de dados.** Dados em React state + `localStorage` (sobrevive a reloads).
-- **Reset:** Limpar `localStorage` no browser (chaves `solarops_projects` e `solarops_checklist`) ou abrir em janela privada.
-
-### Regras de cálculo (simplificadas para demo)
-
-- **kWp:** superfície telhado (m²) × 0,17 · **Produção:** kWp × 1150 kWh/ano.
-- **Klimabonus (indicativo):** ≤15 kWp → €9.300; >15 kWp → €9.300 + €620/kWp extra; bateria +€2.250.
-- **Instalação:** Basic €2.100/kWp, Premium €2.400/kWp; bateria ~€6.500.
-- **Poupança anual:** % da fatura anual (baixo 35%, normal 45%, elevado 55%). Custo líquido = max(0, instalação − Klimabonus).
-- **Fourchette:** Custo líquido apresentado como banda (ex. €12.000 – €13.440), não preço fixo; ~12% margem no limite superior.
-
----
-
-## Adaptar para outra empresa ou região
-
-**Branding (ficheiro único):** **`client/src/config/demo.ts`**
-
-- `companyName` — Nome da empresa (navbar, PDF).
-- `consoleTagline` — Subtítulo da consola.
-- `userName` / `userRole` — Nome e cargo do utilizador (canto superior direito).
-- `subsidyName` / `operatorName` — Nome do subsídio e operador de rede (ex. Klimabonus, CREOS).
-
-Todo o copy da UI está em **`client/src/config/opsCopy.ts`**. Regras de cálculo e constantes em **`client/src/lib/calculations.ts`**.
-
----
-
-## Deploy (link ao vivo para enviar por email)
-
-Para publicar o demo (ex. Vercel ou Netlify): ver **[docs/DEPLOY.md](docs/DEPLOY.md)** — build command: `npm run build`, output: `dist/public`.
-
----
-
-## Stack técnica
-
-- **Frontend:** React 19, Vite 7, Wouter, Tailwind CSS 4, Radix UI, TanStack Query
-- **Backend:** Express 5 (rotas API preparadas, não ligadas ao demo)
-- **Tipos:** TypeScript (strict mode), Zod
-- **Testes:** Vitest (testes de cálculo e regras de negócio)
-- **PDF:** pdf-lib (geração client-side, sem servidor)
-- **Drag-and-drop:** dnd-kit
-
----
-
-## Sobre o autor
-
-**Hugo Melo** — candidato a posições de operações, digital ou gestão comercial no setor solar no Luxemburgo.
-
-- GitHub: [github.com/Hugomelo123](https://github.com/Hugomelo123)
-- LinkedIn: [linkedin.com/in/hugomelo123](https://www.linkedin.com/in/hugomelo123)
-
----
-
-## Licença
-
-MIT
