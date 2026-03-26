@@ -1,302 +1,222 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'wouter';
 import { useProjects } from '@/components/Providers';
-import { Sun, MapPin, Zap, CheckCircle2, AlertTriangle, Camera, ChevronRight, Phone, ArrowLeft, HardHat, X } from 'lucide-react';
+import { MapPin, Zap, Phone, HardHat, Clock, CheckCircle2, AlertCircle, User } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
-import { toast } from 'sonner';
 
-const TECHS = ['Luca Ferreira', 'Klaus Braun', 'Rui Santos', 'Mia Hoffmann', 'David Klein'];
+const TECHS = ['Klaus Braun', 'Luca Ferreira', 'Mia Hoffmann', 'Rui Santos', 'David Klein'];
+
+const STATUS_LABELS: Record<string, string> = {
+  installation: 'En installation',
+  raccordement: 'Raccordement',
+  visit: 'Visite terrain',
+};
+
+const STATUS_COLOR: Record<string, string> = {
+  installation: 'bg-amber-100 text-amber-800 border-amber-200',
+  raccordement: 'bg-blue-100 text-blue-800 border-blue-200',
+  visit: 'bg-purple-100 text-purple-800 border-purple-200',
+};
 
 export default function WorkerPage() {
-  const { projects, addHistoryEvent, moveProject } = useProjects();
-  const [currentTech, setCurrentTech] = useState('Luca Ferreira');
-  const [techPickerOpen, setTechPickerOpen] = useState(false);
-  const [problemOpen, setProblemOpen] = useState<string | null>(null);
-  const [problemText, setProblemText] = useState('');
-  const [photoOpen, setPhotoOpen] = useState<string | null>(null);
-  const [photoNote, setPhotoNote] = useState('');
+  const { projects } = useProjects();
 
-  const myProjects = projects.filter(
-    p => (p.status === 'installation' || p.status === 'raccordement') && p.assignedTech === currentTech
+  const activeStatuses = ['installation', 'raccordement', 'visit'];
+
+  // For each tech, find their assigned project(s)
+  const techAssignments = TECHS.map(tech => {
+    const assigned = projects.filter(
+      p => p.assignedTech === tech && activeStatuses.includes(p.status)
+    );
+    return { tech, assigned };
+  });
+
+  const unassigned = projects.filter(
+    p => activeStatuses.includes(p.status) && !p.assignedTech
   );
 
-  const pendingCount = myProjects.filter(p => p.status === 'installation').length;
-  const initials = currentTech.split(' ').map(n => n[0]).join('');
-
-  function handleProblem(projectId: string) {
-    if (!problemText.trim()) return;
-    addHistoryEvent(projectId, {
-      type: 'problem',
-      label: `Problema reportado: ${problemText.slice(0, 60)}`,
-      meta: problemText,
-    });
-    toast.error('Problema reportado ao escritório', { description: problemText.slice(0, 80) });
-    setProblemOpen(null);
-    setProblemText('');
-  }
-
-  function handlePhoto(projectId: string) {
-    if (!photoNote.trim()) return;
-    addHistoryEvent(projectId, {
-      type: 'field_update',
-      label: `Foto + nota de terreno: ${photoNote.slice(0, 60)}`,
-      meta: photoNote,
-    });
-    toast.success('Nota enviada ao escritório');
-    setPhotoOpen(null);
-    setPhotoNote('');
-  }
-
-  function handleDone(projectId: string) {
-    moveProject(projectId, 'raccordement');
-    addHistoryEvent(projectId, {
-      type: 'status_change',
-      label: 'Instalação concluída pelo técnico de terreno',
-    });
-    toast.success('Obra marcada como concluída!', { description: 'O escritório foi notificado.' });
-  }
+  const totalOnField = techAssignments.filter(t => t.assigned.length > 0).length;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex flex-col">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-700 to-emerald-600 px-4 pt-8 pb-6 shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <Link href="/dashboard" className="flex items-center gap-1 text-emerald-200 text-sm">
-            <ArrowLeft className="h-4 w-4" /> Escritório
-          </Link>
-          <button
-            onClick={() => setTechPickerOpen(true)}
-            className="h-8 w-8 bg-emerald-800/50 hover:bg-emerald-800/80 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
-          >
-            {initials}
-          </button>
+      <div>
+        <div className="flex items-center gap-3 mb-1">
+          <HardHat className="h-7 w-7 text-slate-600" />
+          <h1 className="text-3xl font-bold text-slate-900">Équipe terrain</h1>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="h-12 w-12 bg-white/20 rounded-2xl flex items-center justify-center">
-            <HardHat className="h-7 w-7 text-white" />
-          </div>
-          <div>
-            <p className="text-emerald-200 text-xs font-medium uppercase tracking-wide">Vista Terreno</p>
-            <h1 className="text-2xl font-bold">{currentTech}</h1>
-            <p className="text-emerald-200 text-sm">
-              {pendingCount > 0
-                ? `${pendingCount} obra${pendingCount > 1 ? 's' : ''} hoje`
-                : 'Sem obras pendentes hoje'}
-            </p>
-          </div>
-        </div>
+        <p className="text-slate-500">Vue d'ensemble des techniciens sur chantier aujourd'hui.</p>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 px-4 py-6 space-y-4">
-        {myProjects.length === 0 ? (
-          <div className="mt-16 text-center space-y-3">
-            <CheckCircle2 className="h-16 w-16 mx-auto text-emerald-500 opacity-60" />
-            <p className="text-slate-400 text-lg font-medium">Nenhuma obra atribuída</p>
-            <p className="text-slate-500 text-sm">Contacta o escritório para confirmação.</p>
-          </div>
-        ) : (
-          myProjects.map(project => (
-            <div key={project.id} className="bg-slate-800 rounded-2xl overflow-hidden">
-              {/* Project header */}
-              <div className="px-5 py-4 border-b border-slate-700">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <h2 className="text-lg font-bold truncate">{project.clientName}</h2>
-                    <div className="flex items-center gap-1.5 text-slate-400 text-sm mt-1">
-                      <MapPin className="h-3.5 w-3.5 shrink-0" />
-                      <span className="truncate">{project.address}</span>
-                    </div>
+      {/* Summary bar */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="bg-white/80">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+              <HardHat className="h-5 w-5 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-slate-900">{totalOnField}</p>
+              <p className="text-xs text-slate-500">Sur chantier</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-white/80">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center">
+              <Zap className="h-5 w-5 text-amber-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-slate-900">
+                {projects.filter(p => p.status === 'installation').length}
+              </p>
+              <p className="text-xs text-slate-500">En installation</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-white/80">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center">
+              <CheckCircle2 className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-slate-900">
+                {projects.filter(p => p.status === 'raccordement').length}
+              </p>
+              <p className="text-xs text-slate-500">Raccordement</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-white/80">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-red-100 flex items-center justify-center">
+              <AlertCircle className="h-5 w-5 text-red-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-slate-900">{unassigned.length}</p>
+              <p className="text-xs text-slate-500">Non assignés</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Tech grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {techAssignments.map(({ tech, assigned }) => {
+          const initials = tech.split(' ').map(n => n[0]).join('');
+          const isOnField = assigned.length > 0;
+          return (
+            <Card key={tech} className={`bg-white/80 backdrop-blur-sm border transition-shadow ${isOnField ? 'border-slate-200 shadow-md' : 'border-slate-100 opacity-70'}`}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className={`h-11 w-11 rounded-full flex items-center justify-center font-bold text-sm border-2 ${
+                    isOnField
+                      ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
+                      : 'bg-slate-100 text-slate-500 border-slate-200'
+                  }`}>
+                    {initials}
                   </div>
-                  <div className="text-right shrink-0">
-                    <div className="flex items-center gap-1 text-emerald-400 font-bold">
-                      <Zap className="h-4 w-4" />
-                      {project.kwp} kWp
-                    </div>
-                    <p className="text-xs text-slate-500 mt-0.5">{formatCurrency(project.value)}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-slate-800">{tech}</p>
+                    <p className={`text-xs font-medium ${isOnField ? 'text-emerald-600' : 'text-slate-400'}`}>
+                      {isOnField ? `${assigned.length} chantier${assigned.length > 1 ? 's' : ''} actif${assigned.length > 1 ? 's' : ''}` : 'Disponible / Bureau'}
+                    </p>
                   </div>
+                  <div className={`h-2.5 w-2.5 rounded-full ${isOnField ? 'bg-emerald-500' : 'bg-slate-300'}`} />
                 </div>
+              </CardHeader>
 
-                {project.status === 'raccordement' && (
-                  <div className="mt-3 flex items-center gap-2 bg-emerald-900/40 text-emerald-400 text-xs font-medium px-3 py-2 rounded-lg">
-                    <CheckCircle2 className="h-4 w-4 shrink-0" />
-                    Instalação concluída — aguarda raccordement CREOS
-                  </div>
-                )}
-              </div>
+              {assigned.length > 0 && (
+                <CardContent className="space-y-3 pt-0">
+                  {assigned.map(project => (
+                    <div key={project.id} className="rounded-xl border border-slate-100 bg-slate-50/60 p-3 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-slate-800 text-sm truncate">{project.clientName}</p>
+                          <div className="flex items-center gap-1 text-slate-500 text-xs mt-0.5">
+                            <MapPin className="h-3 w-3 shrink-0" />
+                            <span className="truncate">{project.address}</span>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className={`text-xs shrink-0 ${STATUS_COLOR[project.status] ?? ''}`}>
+                          {STATUS_LABELS[project.status] ?? project.status}
+                        </Badge>
+                      </div>
 
-              {/* Action buttons */}
-              {project.status === 'installation' && (
-                <div className="p-4 grid grid-cols-1 gap-3">
-                  {/* Report problem */}
-                  <button
-                    onClick={() => { setProblemOpen(project.id); setProblemText(''); }}
-                    className="flex items-center gap-3 bg-red-900/40 border border-red-800/60 hover:bg-red-900/60 text-red-300 rounded-xl px-5 py-4 font-bold text-base transition-colors active:scale-95"
-                  >
-                    <AlertTriangle className="h-6 w-6 shrink-0" />
-                    Reportar problema
-                    <ChevronRight className="h-5 w-5 ml-auto opacity-50" />
-                  </button>
+                      <div className="flex items-center gap-3 text-xs text-slate-500">
+                        <span className="flex items-center gap-1">
+                          <Zap className="h-3 w-3 text-amber-500" />{project.kwp} kWp
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />{project.daysInStage}j sur site
+                        </span>
+                        <span className="ml-auto font-medium text-emerald-700">{formatCurrency(project.value)}</span>
+                      </div>
 
-                  {/* Photo/note */}
-                  <button
-                    onClick={() => { setPhotoOpen(project.id); setPhotoNote(''); }}
-                    className="flex items-center gap-3 bg-blue-900/40 border border-blue-800/60 hover:bg-blue-900/60 text-blue-300 rounded-xl px-5 py-4 font-bold text-base transition-colors active:scale-95"
-                  >
-                    <Camera className="h-6 w-6 shrink-0" />
-                    Foto + nota
-                    <ChevronRight className="h-5 w-5 ml-auto opacity-50" />
-                  </button>
-
-                  {/* Call client */}
-                  {project.phone && (
-                    <button
-                      onClick={() => window.open(`tel:${project.phone}`)}
-                      className="flex items-center gap-3 bg-slate-700 border border-slate-600 hover:bg-slate-600 text-slate-200 rounded-xl px-5 py-4 font-bold text-base transition-colors active:scale-95"
-                    >
-                      <Phone className="h-6 w-6 shrink-0" />
-                      Ligar ao cliente
-                      <span className="ml-auto text-sm font-normal text-slate-400">{project.phone}</span>
-                    </button>
-                  )}
-
-                  {/* Done */}
-                  <button
-                    onClick={() => handleDone(project.id)}
-                    className="flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-xl px-5 py-5 font-bold text-lg transition-colors active:scale-95 mt-1 shadow-lg shadow-emerald-900/40"
-                  >
-                    <CheckCircle2 className="h-7 w-7" />
-                    OBRA TERMINADA
-                  </button>
-                </div>
+                      <div className="flex gap-2 pt-1">
+                        <Link href={`/projects/${project.id}`} className="flex-1">
+                          <Button variant="outline" size="sm" className="w-full h-8 text-xs">
+                            Voir projet
+                          </Button>
+                        </Link>
+                        {project.phone && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-2"
+                            onClick={() => window.open(`tel:${project.phone}`)}
+                          >
+                            <Phone className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
               )}
+            </Card>
+          );
+        })}
+      </div>
 
-              {project.status === 'raccordement' && (
-                <div className="p-4">
-                  <Link
-                    href={`/projects/${project.id}`}
-                    className="flex items-center gap-3 bg-slate-700 rounded-xl px-5 py-4 text-slate-300 hover:bg-slate-600 transition-colors"
-                  >
-                    Ver detalhes do projeto
-                    <ChevronRight className="h-5 w-5 ml-auto opacity-50" />
+      {/* Unassigned projects */}
+      {unassigned.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-red-400" />
+            Projets actifs sans technicien assigné
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {unassigned.map(project => (
+              <Card key={project.id} className="border-red-100 bg-red-50/30">
+                <CardContent className="p-4 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-slate-800 truncate">{project.clientName}</p>
+                      <div className="flex items-center gap-1 text-slate-500 text-xs mt-0.5">
+                        <MapPin className="h-3 w-3 shrink-0" />
+                        <span className="truncate">{project.address}</span>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className={`text-xs shrink-0 ${STATUS_COLOR[project.status] ?? ''}`}>
+                      {STATUS_LABELS[project.status] ?? project.status}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-slate-500">
+                    <span className="flex items-center gap-1"><Zap className="h-3 w-3 text-amber-500" />{project.kwp} kWp</span>
+                    <span className="ml-auto font-medium text-emerald-700">{formatCurrency(project.value)}</span>
+                  </div>
+                  <Link href={`/projects/${project.id}`}>
+                    <Button variant="outline" size="sm" className="w-full h-8 text-xs mt-1">
+                      Assigner un technicien
+                    </Button>
                   </Link>
-                </div>
-              )}
-            </div>
-          ))
-        )}
-
-        {/* Demo note */}
-        <div className="bg-amber-900/30 border border-amber-800/40 rounded-xl px-4 py-3 text-amber-300 text-xs text-center">
-          Vista de terreno — dados em tempo real do pipeline. A mostrar obras atribuídas a <strong>{currentTech}</strong>.
-          <br /><button onClick={() => setTechPickerOpen(true)} className="underline mt-1 inline-block">Mudar técnico (demo)</button>
-        </div>
-      </div>
-
-      {/* Problem modal */}
-      {problemOpen && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-end">
-          <div className="w-full bg-slate-800 rounded-t-3xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-red-300 flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5" /> Reportar problema
-              </h3>
-              <button onClick={() => setProblemOpen(null)} className="text-slate-400"><X className="h-5 w-5" /></button>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {['Material em falta', 'CREOS bloqueado', 'Acesso impedido', 'Problema estrutural', 'Telhado danificado', 'Outro'].map(opt => (
-                <button
-                  key={opt}
-                  onClick={() => setProblemText(opt)}
-                  className={`py-3 px-3 rounded-xl text-sm font-medium border transition-colors ${
-                    problemText === opt
-                      ? 'bg-red-600 border-red-500 text-white'
-                      : 'bg-slate-700 border-slate-600 text-slate-300 hover:bg-slate-600'
-                  }`}
-                >
-                  {opt}
-                </button>
-              ))}
-            </div>
-            <textarea
-              value={problemText}
-              onChange={e => setProblemText(e.target.value)}
-              placeholder="Descreve o problema em detalhe..."
-              className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-sm resize-none h-24 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-            <button
-              onClick={() => handleProblem(problemOpen)}
-              disabled={!problemText.trim()}
-              className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white font-bold py-4 rounded-xl text-base transition-colors"
-            >
-              Enviar ao escritório
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Tech picker modal */}
-      {techPickerOpen && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-end">
-          <div className="w-full bg-slate-800 rounded-t-3xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white">Seleccionar técnico</h3>
-              <button onClick={() => setTechPickerOpen(false)} className="text-slate-400"><X className="h-5 w-5" /></button>
-            </div>
-            <p className="text-slate-400 text-xs">Demo — simula o login de diferentes técnicos de terreno.</p>
-            <div className="space-y-2">
-              {TECHS.map(tech => (
-                <button
-                  key={tech}
-                  onClick={() => { setCurrentTech(tech); setTechPickerOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium text-sm transition-colors ${
-                    tech === currentTech
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                  }`}
-                >
-                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold shrink-0">
-                    {tech.split(' ').map(n => n[0]).join('')}
-                  </div>
-                  {tech}
-                  {tech === currentTech && <CheckCircle2 className="h-4 w-4 ml-auto" />}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Photo/note modal */}
-      {photoOpen && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-end">
-          <div className="w-full bg-slate-800 rounded-t-3xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-blue-300 flex items-center gap-2">
-                <Camera className="h-5 w-5" /> Foto + nota
-              </h3>
-              <button onClick={() => setPhotoOpen(null)} className="text-slate-400"><X className="h-5 w-5" /></button>
-            </div>
-            {/* Mock camera area */}
-            <div className="bg-slate-700 rounded-2xl h-40 flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-600 cursor-pointer hover:bg-slate-600 transition-colors"
-              onClick={() => toast.info('Câmera (demo)', { description: 'Em produção abre a câmera nativa.' })}
-            >
-              <Camera className="h-10 w-10 text-slate-400" />
-              <span className="text-slate-400 text-sm">Toca para tirar foto (demo)</span>
-            </div>
-            <textarea
-              value={photoNote}
-              onChange={e => setPhotoNote(e.target.value)}
-              placeholder="Adiciona uma nota para o escritório..."
-              className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-sm resize-none h-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              onClick={() => handlePhoto(photoOpen)}
-              disabled={!photoNote.trim()}
-              className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold py-4 rounded-xl text-base transition-colors"
-            >
-              Enviar ao escritório
-            </button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       )}

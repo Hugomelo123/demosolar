@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Layout from "./layout";
-import { ProjectsProvider } from "./components/Providers";
 
 const LandingPage = React.lazy(() => import("@/pages/landing"));
 const WorkerPage = React.lazy(() => import("@/pages/worker"));
@@ -35,13 +34,6 @@ function Router() {
           <LandingPage />
         </Suspense>
       </Route>
-      <Route path="/worker">
-        <ProjectsProvider>
-          <Suspense fallback={<PageFallback />}>
-            <WorkerPage />
-          </Suspense>
-        </ProjectsProvider>
-      </Route>
       <Route>
         <Layout>
           <Suspense fallback={<PageFallback />}>
@@ -50,6 +42,7 @@ function Router() {
               <Route path="/analytics" component={AnalyticsPage} />
               <Route path="/executive" component={ExecutivePage} />
               <Route path="/team" component={TeamPage} />
+              <Route path="/worker" component={WorkerPage} />
               <Route path="/settings" component={SettingsPage} />
               <Route path="/quote" component={QuotePage} />
               <Route path="/projects/:id" component={ProjectDetails} />
