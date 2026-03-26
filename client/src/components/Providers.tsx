@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Project, ProjectStatus, NextAction } from '../types';
+import { Project, ProjectStatus, NextAction, ChangeEvent } from '../types';
 import { initialProjects } from '../lib/mockData';
+
+function makeEvent(type: ChangeEvent['type'], label: string, meta?: string): ChangeEvent {
+  return { id: crypto.randomUUID(), type, label, at: new Date().toISOString(), meta };
+}
 
 export interface AddProjectData {
   clientName: string;
@@ -21,6 +25,7 @@ interface ProjectsContextType {
   addNote: (id: string, note: string) => void;
   markContacted: (id: string) => void;
   setNextAction: (id: string, nextAction: NextAction) => void;
+  addHistoryEvent: (id: string, event: Omit<ChangeEvent, 'id' | 'at'>) => void;
 }
 
 const ProjectsContext = createContext<ProjectsContextType | undefined>(undefined);
@@ -68,8 +73,16 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const moveProject = useCallback((id: string, status: ProjectStatus) => {
+    const stageLabels: Record<string, string> = {
+      lead: 'Prospection', visit: 'Visite technique', quote: 'Devis',
+      creos: 'Autorisation CREOS', installation: 'Installation',
+      raccordement: 'Raccordement', completed: 'Terminé',
+    };
+    const ev = makeEvent('status_change', `Avancé vers ${stageLabels[status] ?? status}`);
     setProjects(prev => prev.map(p =>
-      p.id === id ? { ...p, status, daysInStage: 0, stageEnteredAt: new Date().toISOString() } : p
+      p.id === id
+        ? { ...p, status, daysInStage: 0, stageEnteredAt: new Date().toISOString(), history: [...(p.history ?? []), ev] }
+        : p
     ));
   }, []);
 
@@ -96,14 +109,25 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addNote = useCallback((id: string, note: string) => {
+    const ev = makeEvent('note', `Note ajoutée`, note.slice(0, 80));
     setProjects(prev => prev.map(p =>
-      p.id === id ? { ...p, notes: [...p.notes, note] } : p
+      p.id === id ? { ...p, notes: [...p.notes, note], history: [...(p.history ?? []), ev] } : p
     ));
   }, []);
 
   const markContacted = useCallback((id: string) => {
+    const ev = makeEvent('contact', 'Contact client enregistré');
     setProjects(prev => prev.map(p =>
-      p.id === id ? { ...p, lastContactDaysAgo: 0, lastContactAt: new Date().toISOString() } : p
+      p.id === id
+        ? { ...p, lastContactDaysAgo: 0, lastContactAt: new Date().toISOString(), history: [...(p.history ?? []), ev] }
+        : p
+    ));
+  }, []);
+
+  const addHistoryEvent = useCallback((id: string, event: Omit<ChangeEvent, 'id' | 'at'>) => {
+    const ev: ChangeEvent = { ...event, id: crypto.randomUUID(), at: new Date().toISOString() };
+    setProjects(prev => prev.map(p =>
+      p.id === id ? { ...p, history: [...(p.history ?? []), ev] } : p
     ));
   }, []);
 
@@ -121,7 +145,8 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     addNote,
     markContacted,
     setNextAction,
-  }), [projects, updateProject, moveProject, addProject, addNote, markContacted, setNextAction]);
+    addHistoryEvent,
+  }), [projects, updateProject, moveProject, addProject, addNote, markContacted, setNextAction, addHistoryEvent]);
 
   return (
     <ProjectsContext.Provider value={value}>

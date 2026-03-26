@@ -10,12 +10,155 @@ import { NextActionCard } from '@/components/NextActionCard';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar as CalendarIcon, Phone, MapPin, User, MessageSquare } from 'lucide-react';
+import { Calendar as CalendarIcon, Phone, MapPin, User, MessageSquare, History, Send, Check, AlertTriangle, PhoneCall, GitBranch, StickyNote } from 'lucide-react';
 import { formatDate, formatCurrency } from '@/lib/utils';
 import NotFound from './not-found';
 import { Label } from '@/components/ui/label';
 import { opsCopy } from '@/config/opsCopy';
-import type { ProjectOwner } from '@/types';
+import type { ProjectOwner, ChangeEvent } from '@/types';
+import { toast } from 'sonner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+type WaTemplate = { key: string; label: string; prefix: string; body: string; getMessage: (clientName: string, address: string) => string };
+
+const WA_TEMPLATES: WaTemplate[] = [
+  {
+    key: 'followup',
+    label: 'Relance devis',
+    prefix: opsCopy.followUpLabel,
+    body: opsCopy.followUpQuoteCheck,
+    getMessage: (clientName) => `Bonjour ${clientName}, suite à notre devis, avez-vous des questions? Cordialement.`,
+  },
+  {
+    key: 'creos',
+    label: 'CREOS en cours',
+    prefix: opsCopy.updateLabel,
+    body: opsCopy.updateCreosPending,
+    getMessage: (clientName) => `Bonjour ${clientName}, bonne nouvelle! Votre dossier CREOS est en cours de traitement. On revient vers vous sous 3 semaines.`,
+  },
+  {
+    key: 'install',
+    label: 'Confirmation installation',
+    prefix: opsCopy.installLabel,
+    body: opsCopy.installScheduleConfirm,
+    getMessage: (clientName) => `Bonjour ${clientName}, notre équipe passera le ${formatDate(new Date())} pour l'installation. Merci de libérer l'accès garage.`,
+  },
+];
+
+function WhatsAppPanel({ project }: { project: { id: string; clientName: string; address: string } }) {
+  const { addHistoryEvent } = useProjects();
+  const [selected, setSelected] = useState<WaTemplate | null>(null);
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState<string | null>(null);
+
+  function handleSend() {
+    if (!selected) return;
+    setSending(true);
+    setTimeout(() => {
+      setSending(false);
+      setSent(selected.key);
+      addHistoryEvent(project.id, {
+        type: 'whatsapp',
+        label: `WhatsApp envoyé — ${selected.label}`,
+        meta: selected.getMessage(project.clientName, project.address).slice(0, 100),
+      });
+      toast.success('Message WhatsApp envoyé (demo)', { description: selected.label });
+      setTimeout(() => { setSent(null); setSelected(null); }, 2000);
+    }, 1400);
+  }
+
+  return (
+    <Card className="bg-emerald-50/50 border-emerald-100">
+      <CardHeader>
+        <CardTitle className="text-lg text-emerald-800 flex items-center gap-2">
+          <Send className="h-4 w-4" />
+          {opsCopy.whatsappTemplates}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {WA_TEMPLATES.map(tpl => (
+          <Button
+            key={tpl.key}
+            variant="ghost"
+            className="w-full justify-start text-emerald-700 hover:text-emerald-800 hover:bg-emerald-100 h-auto py-3 text-left whitespace-normal"
+            onClick={() => setSelected(tpl)}
+          >
+            <span className="font-bold mr-2">{tpl.prefix}</span> {tpl.body}
+          </Button>
+        ))}
+
+        {selected && (
+          <Dialog open onOpenChange={() => setSelected(null)}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-emerald-700">
+                  <Send className="h-4 w-4" /> {selected.label}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="bg-[#dcf8c6] rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-slate-800 shadow-sm max-w-[85%]">
+                  {selected.getMessage(project.clientName, project.address)}
+                </div>
+                <p className="text-xs text-slate-400 italic">Prévisualisation du message WhatsApp.</p>
+              </div>
+              <DialogFooter className="gap-2">
+                <Button variant="outline" onClick={() => setSelected(null)}>Annuler</Button>
+                <Button
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white min-w-[120px]"
+                  onClick={handleSend}
+                  disabled={sending || sent === selected.key}
+                >
+                  {sending ? (
+                    <span className="flex items-center gap-2"><span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> Envoi…</span>
+                  ) : sent === selected.key ? (
+                    <span className="flex items-center gap-2"><Check className="h-4 w-4" /> Envoyé ✓</span>
+                  ) : (
+                    <span className="flex items-center gap-2"><Send className="h-4 w-4" /> Envoyer (demo)</span>
+                  )}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function HistoryTimeline({ history }: { history: ChangeEvent[] }) {
+  const iconMap: Record<string, React.ReactNode> = {
+    status_change: <GitBranch className="h-3.5 w-3.5 text-blue-500" />,
+    note: <StickyNote className="h-3.5 w-3.5 text-slate-500" />,
+    contact: <PhoneCall className="h-3.5 w-3.5 text-emerald-500" />,
+    whatsapp: <Send className="h-3.5 w-3.5 text-emerald-600" />,
+    problem: <AlertTriangle className="h-3.5 w-3.5 text-red-500" />,
+    field_update: <History className="h-3.5 w-3.5 text-purple-500" />,
+  };
+
+  const sorted = [...history].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+
+  if (sorted.length === 0) {
+    return <p className="text-sm text-slate-400 italic py-4 text-center">Aucun événement enregistré.</p>;
+  }
+
+  return (
+    <div className="relative space-y-0">
+      <div className="absolute left-3.5 top-2 bottom-2 w-px bg-slate-100" />
+      {sorted.map((ev, i) => (
+        <div key={ev.id} className="relative flex gap-3 pb-4 last:pb-0">
+          <div className="relative z-10 flex-shrink-0 h-7 w-7 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm mt-0.5">
+            {iconMap[ev.type] ?? <History className="h-3.5 w-3.5 text-slate-400" />}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-slate-700">{ev.label}</p>
+            {ev.meta && <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{ev.meta}</p>}
+            <p className="text-xs text-slate-400 mt-1">{new Date(ev.at).toLocaleString('fr-LU', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function ProjectDetails() {
   const [match, params] = useRoute('/projects/:id');
@@ -117,22 +260,40 @@ export default function ProjectDetails() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
-                        {project.notes.map((note, i) => (
-                            <div key={i} className="p-3 bg-slate-50 rounded-lg border border-slate-100 text-sm text-slate-700">
-                                {note}
+                    <Tabs defaultValue="notes">
+                        <TabsList className="w-full">
+                            <TabsTrigger value="notes" className="flex-1 gap-1.5">
+                                <StickyNote className="h-3.5 w-3.5" /> Notes ({project.notes.length})
+                            </TabsTrigger>
+                            <TabsTrigger value="history" className="flex-1 gap-1.5">
+                                <History className="h-3.5 w-3.5" /> Historique ({(project.history ?? []).length})
+                            </TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="notes" className="space-y-3 mt-3">
+                            <div className="space-y-2 max-h-[240px] overflow-y-auto pr-2">
+                                {project.notes.length === 0 && (
+                                    <p className="text-sm text-slate-400 italic py-4 text-center">Aucune note.</p>
+                                )}
+                                {project.notes.map((note, i) => (
+                                    <div key={i} className="p-3 bg-slate-50 rounded-lg border border-slate-100 text-sm text-slate-700">
+                                        {note}
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                    <div className="flex gap-2">
-                        <Textarea 
-                            placeholder={opsCopy.addNotePlaceholder} 
-                            value={noteText}
-                            onChange={e => setNoteText(e.target.value)}
-                            className="min-h-[80px]"
-                        />
-                        <Button onClick={handleAddNote} className="h-auto self-end">{opsCopy.addNoteButton}</Button>
-                    </div>
+                            <div className="flex gap-2">
+                                <Textarea
+                                    placeholder={opsCopy.addNotePlaceholder}
+                                    value={noteText}
+                                    onChange={e => setNoteText(e.target.value)}
+                                    className="min-h-[80px]"
+                                />
+                                <Button onClick={handleAddNote} className="h-auto self-end">{opsCopy.addNoteButton}</Button>
+                            </div>
+                        </TabsContent>
+                        <TabsContent value="history" className="mt-3">
+                            <HistoryTimeline history={project.history ?? []} />
+                        </TabsContent>
+                    </Tabs>
                 </CardContent>
             </Card>
         </div>
@@ -221,34 +382,7 @@ export default function ProjectDetails() {
                 </CardContent>
             </Card>
 
-            <Card className="bg-emerald-50/50 border-emerald-100">
-                <CardHeader>
-                    <CardTitle className="text-lg text-emerald-800">{opsCopy.whatsappTemplates}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                    <Button 
-                        variant="ghost" 
-                        className="w-full justify-start text-emerald-700 hover:text-emerald-800 hover:bg-emerald-100 h-auto py-3 text-left whitespace-normal"
-                        onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Bonjour ${project.clientName}, suite à notre devis pour ${project.address}, avez-vous des questions? Cordialement.`)}`, '_blank')}
-                    >
-                        <span className="font-bold mr-2">{opsCopy.followUpLabel}</span> {opsCopy.followUpQuoteCheck}
-                    </Button>
-                    <Button 
-                        variant="ghost" 
-                        className="w-full justify-start text-emerald-700 hover:text-emerald-800 hover:bg-emerald-100 h-auto py-3 text-left whitespace-normal"
-                        onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Bonjour ${project.clientName}, bonne nouvelle! Votre dossier CREOS est en cours de traitement. On revient vers vous sous 3 semaines.`)}`, '_blank')}
-                    >
-                        <span className="font-bold mr-2">{opsCopy.updateLabel}</span> {opsCopy.updateCreosPending}
-                    </Button>
-                    <Button 
-                        variant="ghost" 
-                        className="w-full justify-start text-emerald-700 hover:text-emerald-800 hover:bg-emerald-100 h-auto py-3 text-left whitespace-normal"
-                        onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Bonjour ${project.clientName}, notre équipe passera le ${formatDate(new Date())} pour l'installation. Merci de libérer l'accès garage.`)}`, '_blank')}
-                    >
-                        <span className="font-bold mr-2">{opsCopy.installLabel}</span> {opsCopy.installScheduleConfirm}
-                    </Button>
-                </CardContent>
-            </Card>
+            <WhatsAppPanel project={project} />
 
             {project.visitDate && (
                  <Card className="bg-blue-50/50 border-blue-100">

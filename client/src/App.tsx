@@ -6,8 +6,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Layout from "./layout";
+import { ProjectsProvider } from "./components/Providers";
 
 const LandingPage = React.lazy(() => import("@/pages/landing"));
+const WorkerPage = React.lazy(() => import("@/pages/worker"));
 const Dashboard = React.lazy(() => import("@/pages/dashboard"));
 const QuotePage = React.lazy(() => import("@/pages/quote"));
 const ProjectDetails = React.lazy(() => import("@/pages/project-details"));
@@ -32,6 +34,13 @@ function Router() {
         <Suspense fallback={<PageFallback />}>
           <LandingPage />
         </Suspense>
+      </Route>
+      <Route path="/worker">
+        <ProjectsProvider>
+          <Suspense fallback={<PageFallback />}>
+            <WorkerPage />
+          </Suspense>
+        </ProjectsProvider>
       </Route>
       <Route>
         <Layout>

@@ -1,5 +1,13 @@
 export type ProjectStatus = 'lead' | 'visit' | 'quote' | 'creos' | 'installation' | 'raccordement' | 'completed';
 
+export interface ChangeEvent {
+  id: string;
+  type: 'status_change' | 'note' | 'contact' | 'whatsapp' | 'problem' | 'field_update';
+  label: string;
+  at: string; // ISO timestamp
+  meta?: string;
+}
+
 export type NextAction =
   | 'Call client'
   | 'Schedule site visit'
@@ -35,6 +43,8 @@ export interface Project {
   stageEnteredAt?: string;
   /** ISO timestamp of last client contact */
   lastContactAt?: string;
+  /** Change history events for audit trail */
+  history?: ChangeEvent[];
 }
 
 export interface QuoteData {
