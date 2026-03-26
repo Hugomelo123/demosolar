@@ -5,25 +5,23 @@ import { Sun, MapPin, Zap, CheckCircle2, AlertTriangle, Camera, ChevronRight, Ph
 import { formatCurrency } from '@/lib/utils';
 import { toast } from 'sonner';
 
-const CURRENT_TECH = 'Luca Ferreira';
-
-interface ProblemReport {
-  projectId: string;
-  text: string;
-}
+const TECHS = ['Luca Ferreira', 'Klaus Braun', 'Rui Santos', 'Mia Hoffmann', 'David Klein'];
 
 export default function WorkerPage() {
   const { projects, addHistoryEvent, moveProject } = useProjects();
+  const [currentTech, setCurrentTech] = useState('Luca Ferreira');
+  const [techPickerOpen, setTechPickerOpen] = useState(false);
   const [problemOpen, setProblemOpen] = useState<string | null>(null);
   const [problemText, setProblemText] = useState('');
   const [photoOpen, setPhotoOpen] = useState<string | null>(null);
   const [photoNote, setPhotoNote] = useState('');
 
   const myProjects = projects.filter(
-    p => (p.status === 'installation' || p.status === 'raccordement') && p.assignedTech === CURRENT_TECH
+    p => (p.status === 'installation' || p.status === 'raccordement') && p.assignedTech === currentTech
   );
 
   const pendingCount = myProjects.filter(p => p.status === 'installation').length;
+  const initials = currentTech.split(' ').map(n => n[0]).join('');
 
   function handleProblem(projectId: string) {
     if (!problemText.trim()) return;
@@ -66,7 +64,12 @@ export default function WorkerPage() {
           <Link href="/dashboard" className="flex items-center gap-1 text-emerald-200 text-sm">
             <ArrowLeft className="h-4 w-4" /> Escritório
           </Link>
-          <div className="h-8 w-8 bg-emerald-800/50 rounded-full flex items-center justify-center text-xs font-bold">LF</div>
+          <button
+            onClick={() => setTechPickerOpen(true)}
+            className="h-8 w-8 bg-emerald-800/50 hover:bg-emerald-800/80 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
+          >
+            {initials}
+          </button>
         </div>
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 bg-white/20 rounded-2xl flex items-center justify-center">
@@ -74,7 +77,7 @@ export default function WorkerPage() {
           </div>
           <div>
             <p className="text-emerald-200 text-xs font-medium uppercase tracking-wide">Vista Terreno</p>
-            <h1 className="text-2xl font-bold">{CURRENT_TECH}</h1>
+            <h1 className="text-2xl font-bold">{currentTech}</h1>
             <p className="text-emerald-200 text-sm">
               {pendingCount > 0
                 ? `${pendingCount} obra${pendingCount > 1 ? 's' : ''} hoje`
@@ -185,7 +188,8 @@ export default function WorkerPage() {
 
         {/* Demo note */}
         <div className="bg-amber-900/30 border border-amber-800/40 rounded-xl px-4 py-3 text-amber-300 text-xs text-center">
-          Vista de terreno — dados em tempo real do pipeline. A mostrar obras atribuídas a <strong>{CURRENT_TECH}</strong>.
+          Vista de terreno — dados em tempo real do pipeline. A mostrar obras atribuídas a <strong>{currentTech}</strong>.
+          <br /><button onClick={() => setTechPickerOpen(true)} className="underline mt-1 inline-block">Mudar técnico (demo)</button>
         </div>
       </div>
 
@@ -227,6 +231,38 @@ export default function WorkerPage() {
             >
               Enviar ao escritório
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Tech picker modal */}
+      {techPickerOpen && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-end">
+          <div className="w-full bg-slate-800 rounded-t-3xl p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white">Seleccionar técnico</h3>
+              <button onClick={() => setTechPickerOpen(false)} className="text-slate-400"><X className="h-5 w-5" /></button>
+            </div>
+            <p className="text-slate-400 text-xs">Demo — simula o login de diferentes técnicos de terreno.</p>
+            <div className="space-y-2">
+              {TECHS.map(tech => (
+                <button
+                  key={tech}
+                  onClick={() => { setCurrentTech(tech); setTechPickerOpen(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium text-sm transition-colors ${
+                    tech === currentTech
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                  }`}
+                >
+                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold shrink-0">
+                    {tech.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  {tech}
+                  {tech === currentTech && <CheckCircle2 className="h-4 w-4 ml-auto" />}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}

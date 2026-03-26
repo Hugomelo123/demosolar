@@ -37,10 +37,10 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   // Load from localStorage on mount — v2 adds stageEnteredAt/lastContactAt
   useEffect(() => {
     const version = localStorage.getItem('solarops_version');
-    if (version !== '2') {
-      // Clear stale data that lacks timestamp fields
+    if (version !== '3') {
+      // v3 adds assignedTech to installation/raccordement mock projects
       localStorage.removeItem('solarops_projects');
-      localStorage.setItem('solarops_version', '2');
+      localStorage.setItem('solarops_version', '3');
       return;
     }
     const saved = localStorage.getItem('solarops_projects');
