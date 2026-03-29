@@ -1,119 +1,137 @@
-# SolarOps Luxembourg — Demo Portfolio
+# SolarOps — Consola de Operações para Instaladores Solares
 
-> **Portfolio demo construído por Hugo Melo para candidatura a empresas do setor solar no Luxemburgo.**
-> Mostra compreensão do negócio + competências full-stack (React 19, TypeScript, PDF, Kanban, testes unitários).
-
----
-
-## Porquê este projeto?
-
-Estudei o mercado solar luxemburguês e identifiquei um problema operacional concreto: as equipas de vendas e instalação gerem leads, devis, CREOS e instalações com Excel, WhatsApp e papel. O resultado é pipeline invisível, gargalos CREOS que custam semanas, e erros de seguimento.
-
-Esta consola resolve esse problema:
-- **Dashboard em 30 segundos** — pipeline total, valor, alertas CREOS, projetos sem contacto
-- **Devis em 5 minutos** — cálculo real com Klimabonus 2026, PDF profissional, fourchette indicativa
-- **Pipeline Kanban** — Lead → Visita → Devis → CREOS → Instalação → Terminado
-- **Checklist de instalação** — por projeto, 3 fases, persistido localmente
-
-O objetivo é mostrar que posso **ser contratado** para ajudar uma empresa solar a digitalizar e escalar as suas operações.
+**Demo construído por Hugo Melo** | Luxemburgo, 2026
 
 ---
 
-## Quick start
+## O problema que vi no terreno
 
-**Requisitos:** Node.js 18+, npm.
+A maior parte das empresas de instalação solar no Luxemburgo ainda gere o pipeline com Excel, mensagens de WhatsApp e notas em papel.
 
-```bash
-git clone https://github.com/Hugomelo123/demosolar.git
-cd demosolar
-npm install
-npm run dev:client
-```
+Resultado concreto:
+- Um comercial envia um devis e não sabe se o cliente o abriu
+- Ninguém sabe em que fase está o dossier CREOS — até que o cliente liga a perguntar
+- O responsável de obra não sabe que técnico está em que chantier hoje
+- Quando a equipa cresce, as informações ficam dispersas entre telemóveis pessoais
+- Leads entram, mas ninguém os segue a tempo — e perdem-se para a concorrência
 
-Abrir **http://localhost:5002** — dashboard, pipeline e devis visíveis em menos de 30 segundos.
-
----
-
-## Funcionalidades
-
-| Funcionalidade | Descrição |
-|----------------|-----------|
-| **Devis em 5 min** | Formulário com cálculos em tempo real (kWp, Klimabonus, retorno); PDF profissional; fourchette indicativa. |
-| **Adicionar ao pipeline** | Converte o devis num projeto (coluna Devis Enviado); redireciona para detalhe. |
-| **Dashboard** | Métricas (leads, devis enviados, CREOS/instalação, valor pipeline); funil; Kanban. |
-| **Alertas** | CREOS >21 dias, devis >14 dias, sem contacto >7 dias — com links diretos. |
-| **Detalhe do projeto** | Stepper, notas, agendar visita, próxima ação, templates WhatsApp. |
-| **Checklist instalação** | Por projeto (pré / dia-de / pós instalação); estado guardado por projeto em `localStorage`. |
+Estes não são problemas de tecnologia. São problemas de **visibilidade e coordenação** — e custam tempo, clientes e margem.
 
 ---
 
-## Scripts
+## O que esta consola resolve
 
-| Comando | Descrição |
-|---------|-----------|
-| `npm run dev:client` | Frontend apenas (Vite), http://localhost:5002 |
-| `npm run dev` | Full stack (cliente + servidor) |
-| `npm run build` | Build de produção |
-| `npm start` | Servidor de produção |
-| `npm test` | Testes unitários (Vitest) — cálculos e regras de negócio |
-| `npm run check` | Verificação TypeScript |
+### 1. Pipeline sempre visível
 
----
+Um Kanban com todas as obras ativas: Prospection → Visite → Devis → CREOS → Installation → Raccordement → Terminé.
 
-## Modo demo
+Qualquer pessoa da equipa vê em 30 segundos onde está cada projeto, quem é o responsável, e qual é o próximo passo.
 
-- **Sem base de dados.** Dados em React state + `localStorage` (sobrevive a reloads).
-- **Reset:** Limpar `localStorage` no browser (chaves `solarops_projects` e `solarops_checklist`) ou abrir em janela privada.
+**Alertas automáticos** quando algo está bloqueado:
+- Dossier CREOS há mais de 21 dias sem resposta
+- Devis enviado há mais de 14 dias sem feedback do cliente
+- Projeto sem contacto há mais de 7 dias
 
-### Regras de cálculo (simplificadas para demo)
-
-- **kWp:** superfície telhado (m²) × 0,17 · **Produção:** kWp × 1150 kWh/ano.
-- **Klimabonus (indicativo):** ≤15 kWp → €9.300; >15 kWp → €9.300 + €620/kWp extra; bateria +€2.250.
-- **Instalação:** Basic €2.100/kWp, Premium €2.400/kWp; bateria ~€6.500.
-- **Poupança anual:** % da fatura anual (baixo 35%, normal 45%, elevado 55%). Custo líquido = max(0, instalação − Klimabonus).
-- **Fourchette:** Custo líquido apresentado como banda (ex. €12.000 – €13.440), não preço fixo; ~12% margem no limite superior.
+Deixa de precisar que o gestor pergunte "então, onde está o projeto do Schmit?"
 
 ---
 
-## Adaptar para outra empresa ou região
+### 2. Devis profissional em 5 minutos
 
-**Branding (ficheiro único):** **`client/src/config/demo.ts`**
+Preenches a superfície do telhado, o tipo de consumo e o cliente — a consola calcula:
+- Potência do sistema (kWp)
+- Subvenção Klimabonus 2026 aplicável
+- Custo líquido estimado com margem
+- Período de retorno do investimento
 
-- `companyName` — Nome da empresa (navbar, PDF).
-- `consoleTagline` — Subtítulo da consola.
-- `userName` / `userRole` — Nome e cargo do utilizador (canto superior direito).
-- `subsidyName` / `operatorName` — Nome do subsídio e operador de rede (ex. Klimabonus, CREOS).
+Gera um PDF de devis pronto a enviar, com os dados do cliente e os detalhes técnicos e financeiros.
 
-Todo o copy da UI está em **`client/src/config/opsCopy.ts`**. Regras de cálculo e constantes em **`client/src/lib/calculations.ts`**.
-
----
-
-## Deploy (link ao vivo para enviar por email)
-
-Para publicar o demo (ex. Vercel ou Netlify): ver **[docs/DEPLOY.md](docs/DEPLOY.md)** — build command: `npm run build`, output: `dist/public`.
+**Problema que resolve:** evitar devis feitos à mão em Word com erros de cálculo, ou comerciais que demoram 2 dias a preparar uma proposta simples.
 
 ---
 
-## Stack técnica
+### 3. Seguimento WhatsApp com um clique
 
-- **Frontend:** React 19, Vite 7, Wouter, Tailwind CSS 4, Radix UI, TanStack Query
-- **Backend:** Express 5 (rotas API preparadas, não ligadas ao demo)
-- **Tipos:** TypeScript (strict mode), Zod
-- **Testes:** Vitest (testes de cálculo e regras de negócio)
-- **PDF:** pdf-lib (geração client-side, sem servidor)
-- **Drag-and-drop:** dnd-kit
+Para cada projeto, há modelos de mensagem prontos:
+- Relance após envio de devis
+- Actualização CREOS em curso
+- Confirmação de data de instalação
+
+O comercial clica, vê a prévia da mensagem, e envia. O evento fica registado no histórico do projeto.
+
+**Problema que resolve:** mensagens esquecidas, seguimentos inconsistentes entre comerciais, histórico de contacto perdido no telemóvel de alguém.
+
+---
+
+### 4. Vista de equipa no terreno
+
+Uma página de despacho para o escritório ver, em tempo real:
+- Que técnico está em que chantier
+- Morada, cliente, kWp, estado da obra
+- Projetos activos sem técnico atribuído
+
+**Problema que resolve:** o responsável a ligar para cada técnico de manhã a perguntar onde está e o que tem para hoje.
+
+---
+
+### 5. Histórico por projeto
+
+Cada vez que um estado muda, uma nota é adicionada, um contacto é marcado, ou uma mensagem é enviada — fica registado com data e hora no projeto.
+
+**Problema que resolve:** "quem disse o quê ao cliente e quando?" — uma pergunta que cria conflitos internos e perde negócios quando a resposta não existe.
+
+---
+
+### 6. Checklist de instalação por obra
+
+Antes, durante e depois da instalação — checklists estruturadas por projeto, com progresso visível.
+
+**Problema que resolve:** instalações que ficam incompletas porque um passo foi esquecido, ou onde ninguém sabe se a documentação final foi entregue ao cliente.
+
+---
+
+## Para quem é isto
+
+Esta consola foi pensada para empresas de instalação solar de 3 a 30 pessoas que:
+
+- Já têm pipeline suficiente para perder o controlo sem uma ferramenta
+- Querem profissionalizar o seguimento de clientes sem contratar mais pessoal administrativo
+- Estão a crescer e precisam que toda a equipa fale a mesma linguagem operacional
+
+Não requer formação técnica. Qualquer comercial, técnico ou gestor consegue usar no primeiro dia.
+
+---
+
+## Demo ao vivo
+
+A demo utiliza dados fictícios de projetos em Luxemburgo. Não requer login.
+
+**O que podes testar:**
+- Abrir o dashboard e ver o estado do pipeline em 30 segundos
+- Criar um devis e gerar o PDF
+- Ver os alertas CREOS e de seguimento
+- Consultar o histórico de um projeto
+- Ver a distribuição da equipa no terreno
 
 ---
 
 ## Sobre o autor
 
-**Hugo Melo** — candidato a posições de operações, digital ou gestão comercial no setor solar no Luxemburgo.
+**Hugo Melo** — experiência em operações e gestão de projetos, com foco no setor solar luxemburguês.
+
+Construí esta consola para demonstrar que entendo os problemas operacionais reais de uma empresa de instalação — não apenas a tecnologia, mas o dia-a-dia de vendas, CREOS, equipas de terreno e follow-up de clientes.
+
+Disponível para posições de gestão de operações, coordenação comercial ou transformação digital no setor solar.
 
 - GitHub: [github.com/Hugomelo123](https://github.com/Hugomelo123)
 - LinkedIn: [linkedin.com/in/hugomelo123](https://www.linkedin.com/in/hugomelo123)
 
 ---
 
-## Licença
+## Informação técnica (resumida)
 
-MIT
+A consola funciona no browser, sem instalação de servidor ou base de dados. Os dados ficam guardados localmente.
+
+Para equipas reais, a arquitetura está preparada para ligação a base de dados e autenticação multi-utilizador — não foi implementado porque o objetivo desta versão é demonstrar as operações, não a infraestrutura.
+
+> Stack: React 19, TypeScript, Express, Tailwind CSS, pdf-lib — ver código fonte para detalhes.
