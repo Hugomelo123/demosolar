@@ -29,16 +29,9 @@ These are not technology problems. They are **visibility and coordination** prob
 
 ## What this demo shows
 
-This is **not a product** and **not a ready-to-deploy solution**.
+This is a portfolio piece that demonstrates operational thinking — not a ready-to-deploy product. It shows how I identify where information gets lost, map recurring bottlenecks, and structure the flow before building anything.
 
-It is a portfolio piece that shows how I approach operational problems inside a company:
-
-- identify where information gets lost in the workflow
-- map the recurring bottlenecks
-- simplify the process before building anything
-- build a tool around the real workflow, not around a generic template
-
-The objective is to demonstrate operational thinking. Not to sell software.
+The tool is built around the real workflow, not around a generic template.
 
 ---
 
@@ -129,7 +122,13 @@ This type of tool is relevant for solar installation companies of 3 to 30 people
 - Want to professionalize client follow-up without hiring more administrative staff
 - Are growing and need the whole team to share the same operational picture
 
-No technical training required. Any sales rep, technician or manager can use it from day one.
+Built around the real workflow — no technical training needed. Anyone on the team can use it from day one.
+
+---
+
+## How to use this demo
+
+This demo is designed to be shown during a conversation — not downloaded and tested alone. The goal is to walk through the workflow together and discuss how it fits the real operation.
 
 ---
 
