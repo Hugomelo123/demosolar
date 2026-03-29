@@ -1,137 +1,168 @@
-# SolarOps — Consola de Operações para Instaladores Solares
+# SolarOps Luxembourg — Internal Operations Demo
 
-**Demo construído por Hugo Melo** | Luxemburgo, 2026
+> Demo created by Hugo Melo to show how I identify and solve operational problems inside solar companies in Luxembourg.
+
+<p align="left">
+  <img src="https://img.shields.io/badge/Status-Demo-blue" alt="Status Badge" />
+  <img src="https://img.shields.io/badge/Focus-Internal%20Operations-green" alt="Focus Badge" />
+  <img src="https://img.shields.io/badge/Market-Luxembourg-red" alt="Market Badge" />
+  <img src="https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Node.js-black" alt="Stack Badge" />
+</p>
 
 ---
 
-## O problema que vi no terreno
+## Overview
 
-A maior parte das empresas de instalação solar no Luxemburgo ainda gere o pipeline com Excel, mensagens de WhatsApp e notas em papel.
+In many solar companies, daily operations are still managed across Excel, WhatsApp, calls and paper.
 
-Resultado concreto:
-- Um comercial envia um devis e não sabe se o cliente o abriu
-- Ninguém sabe em que fase está o dossier CREOS — até que o cliente liga a perguntar
-- O responsável de obra não sabe que técnico está em que chantier hoje
-- Quando a equipa cresce, as informações ficam dispersas entre telemóveis pessoais
-- Leads entram, mas ninguém os segue a tempo — e perdem-se para a concorrência
+This usually creates the same problems:
 
-Estes não são problemas de tecnologia. São problemas de **visibilidade e coordenação** — e custam tempo, clientes e margem.
+- no clear pipeline visibility  
+- CREOS delays discovered too late  
+- information lost between teams  
+- weak follow-up on quotes and projects  
+- client-facing output that is too technical or too heavy  
+
+This demo is a simple example of how I would help structure those internal operations.
+
+---
+
+## Why this demo
+
+I studied the Luxembourg solar market and focused on one practical issue:
+
+Sales, admin and installation teams often work with fragmented information.  
+The company moves forward, but the process stays reactive instead of structured.
+
+The result is predictable:
+
+- blocked files stay invisible for too long  
+- next actions are not always clear  
+- quote follow-up depends too much on memory  
+- teams do extra work because the flow is not organized  
+- the client receives too much complexity and not enough clarity  
+
+---
+
+## What this demo shows
+
+This is **not a product** and **not a ready-to-deploy solution**.
+
+It is a portfolio demo that shows how I work inside a company:
+
+- start from a real operational problem  
+- identify the repeating pattern  
+- simplify the workflow  
+- organize the information  
+- build an internal tool adapted to the team  
+
+The objective is to demonstrate operational thinking, not to sell software.
+
+---
+
+## Core operational logic
+
+### Before
+- Excel + WhatsApp + calls  
+- fragmented project tracking  
+- manual follow-up  
+- reactive decisions  
+- difficult overview for management  
+
+### After
+- clear pipeline from lead to installation  
+- structured project follow-up  
+- visible delays and blocked steps  
+- simplified quote generation  
+- better internal visibility for next actions  
+
+---
+
+## Main features
+
+### 1. Dashboard in under 30 seconds
+Quick overview of:
+- total pipeline  
+- estimated pipeline value  
+- CREOS alerts  
+- projects without contact  
+- current project stages  
+
+### 2. Quote generation in minutes
+- real-time calculations  
+- indicative Klimabonus 2026 logic  
+- professional PDF output  
+- indicative price range instead of rigid fixed price  
+
+### 3. Kanban pipeline
+Clear internal flow:
+
+**Lead → Visit → Quote → CREOS → Installation → Done**
+
+This makes project status visible without searching across messages or files.
+
+### 4. Alert system
+Built to highlight common delays:
+- CREOS pending for too long  
+- quote sent but no movement  
+- project without contact for several days  
+
+### 5. Project detail page
+Each project includes:
+- current status  
+- notes  
+- next action  
+- visit scheduling  
+- WhatsApp templates  
+- internal follow-up structure  
+
+### 6. Installation checklist
+Per-project checklist with 3 phases:
+- before installation  
+- installation day  
+- after installation  
+
+Saved locally for quick demo usage.
+
+---
+
+## Example of the problem this demo addresses
+
+A quote is sent.  
+The client waits.  
+CREOS status is unclear.  
+Sales thinks admin is following.  
+Admin thinks sales already called.  
+Installation has no clear visibility on timing.
+
+Nothing is fully broken, but the company loses time because the process is not structured.
+
+This demo shows one way to reduce that noise.
+
+---
+
+## Approach
+
+My logic is always the same:
+
+1. observe the real workflow  
+2. identify where information gets lost  
+3. map the repeated bottlenecks  
+4. simplify the process  
+5. build a tool around the workflow, not around technology  
 
 ---
 
 ## O que esta consola resolve
 
-### 1. Pipeline sempre visível
+### Requirements
+- Node.js 18+  
+- npm  
 
-Um Kanban com todas as obras ativas: Prospection → Visite → Devis → CREOS → Installation → Raccordement → Terminé.
+### Run locally
 
-Qualquer pessoa da equipa vê em 30 segundos onde está cada projeto, quem é o responsável, e qual é o próximo passo.
-
-**Alertas automáticos** quando algo está bloqueado:
-- Dossier CREOS há mais de 21 dias sem resposta
-- Devis enviado há mais de 14 dias sem feedback do cliente
-- Projeto sem contacto há mais de 7 dias
-
-Deixa de precisar que o gestor pergunte "então, onde está o projeto do Schmit?"
-
----
-
-### 2. Devis profissional em 5 minutos
-
-Preenches a superfície do telhado, o tipo de consumo e o cliente — a consola calcula:
-- Potência do sistema (kWp)
-- Subvenção Klimabonus 2026 aplicável
-- Custo líquido estimado com margem
-- Período de retorno do investimento
-
-Gera um PDF de devis pronto a enviar, com os dados do cliente e os detalhes técnicos e financeiros.
-
-**Problema que resolve:** evitar devis feitos à mão em Word com erros de cálculo, ou comerciais que demoram 2 dias a preparar uma proposta simples.
-
----
-
-### 3. Seguimento WhatsApp com um clique
-
-Para cada projeto, há modelos de mensagem prontos:
-- Relance após envio de devis
-- Actualização CREOS em curso
-- Confirmação de data de instalação
-
-O comercial clica, vê a prévia da mensagem, e envia. O evento fica registado no histórico do projeto.
-
-**Problema que resolve:** mensagens esquecidas, seguimentos inconsistentes entre comerciais, histórico de contacto perdido no telemóvel de alguém.
-
----
-
-### 4. Vista de equipa no terreno
-
-Uma página de despacho para o escritório ver, em tempo real:
-- Que técnico está em que chantier
-- Morada, cliente, kWp, estado da obra
-- Projetos activos sem técnico atribuído
-
-**Problema que resolve:** o responsável a ligar para cada técnico de manhã a perguntar onde está e o que tem para hoje.
-
----
-
-### 5. Histórico por projeto
-
-Cada vez que um estado muda, uma nota é adicionada, um contacto é marcado, ou uma mensagem é enviada — fica registado com data e hora no projeto.
-
-**Problema que resolve:** "quem disse o quê ao cliente e quando?" — uma pergunta que cria conflitos internos e perde negócios quando a resposta não existe.
-
----
-
-### 6. Checklist de instalação por obra
-
-Antes, durante e depois da instalação — checklists estruturadas por projeto, com progresso visível.
-
-**Problema que resolve:** instalações que ficam incompletas porque um passo foi esquecido, ou onde ninguém sabe se a documentação final foi entregue ao cliente.
-
----
-
-## Para quem é isto
-
-Esta consola foi pensada para empresas de instalação solar de 3 a 30 pessoas que:
-
-- Já têm pipeline suficiente para perder o controlo sem uma ferramenta
-- Querem profissionalizar o seguimento de clientes sem contratar mais pessoal administrativo
-- Estão a crescer e precisam que toda a equipa fale a mesma linguagem operacional
-
-Não requer formação técnica. Qualquer comercial, técnico ou gestor consegue usar no primeiro dia.
-
----
-
-## Demo ao vivo
-
-A demo utiliza dados fictícios de projetos em Luxemburgo. Não requer login.
-
-**O que podes testar:**
-- Abrir o dashboard e ver o estado do pipeline em 30 segundos
-- Criar um devis e gerar o PDF
-- Ver os alertas CREOS e de seguimento
-- Consultar o histórico de um projeto
-- Ver a distribuição da equipa no terreno
-
----
-
-## Sobre o autor
-
-**Hugo Melo** — experiência em operações e gestão de projetos, com foco no setor solar luxemburguês.
-
-Construí esta consola para demonstrar que entendo os problemas operacionais reais de uma empresa de instalação — não apenas a tecnologia, mas o dia-a-dia de vendas, CREOS, equipas de terreno e follow-up de clientes.
-
-Disponível para posições de gestão de operações, coordenação comercial ou transformação digital no setor solar.
-
-- GitHub: [github.com/Hugomelo123](https://github.com/Hugomelo123)
-- LinkedIn: [linkedin.com/in/hugomelo123](https://www.linkedin.com/in/hugomelo123)
-
----
-
-## Informação técnica (resumida)
-
-A consola funciona no browser, sem instalação de servidor ou base de dados. Os dados ficam guardados localmente.
-
-Para equipas reais, a arquitetura está preparada para ligação a base de dados e autenticação multi-utilizador — não foi implementado porque o objetivo desta versão é demonstrar as operações, não a infraestrutura.
-
-> Stack: React 19, TypeScript, Express, Tailwind CSS, pdf-lib — ver código fonte para detalhes.
+```bash
+git clone https://github.com/Hugomelo123/demosolar.git
+cd demosolar
+npm install
+npm run dev:client
