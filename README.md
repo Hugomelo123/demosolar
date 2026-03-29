@@ -11,36 +11,19 @@
 
 ---
 
-## Overview
+## The problem I observed
 
-In many solar companies, daily operations are still managed across Excel, WhatsApp, calls and paper.
+Most solar installation companies in Luxembourg still manage their pipeline across Excel, WhatsApp, phone calls and paper notes.
 
-This usually creates the same problems:
+In practice, this creates the same recurring problems:
 
-- no clear pipeline visibility  
-- CREOS delays discovered too late  
-- information lost between teams  
-- weak follow-up on quotes and projects  
-- client-facing output that is too technical or too heavy  
+- A sales rep sends a quote and no one knows if the client responded
+- A CREOS file has been waiting 4 weeks — nobody flagged it until the client called
+- The office doesn't know which technician is at which site today
+- When the team grows, information is scattered across personal phones
+- Leads come in but are not followed up in time — and go to a competitor
 
-This demo is a simple example of how I would help structure those internal operations.
-
----
-
-## Why this demo
-
-I studied the Luxembourg solar market and focused on one practical issue:
-
-Sales, admin and installation teams often work with fragmented information.  
-The company moves forward, but the process stays reactive instead of structured.
-
-The result is predictable:
-
-- blocked files stay invisible for too long  
-- next actions are not always clear  
-- quote follow-up depends too much on memory  
-- teams do extra work because the flow is not organized  
-- the client receives too much complexity and not enough clarity  
+These are not technology problems. They are **visibility and coordination** problems — and they cost time, clients, and margin every week.
 
 ---
 
@@ -48,121 +31,138 @@ The result is predictable:
 
 This is **not a product** and **not a ready-to-deploy solution**.
 
-It is a portfolio demo that shows how I work inside a company:
+It is a portfolio piece that shows how I approach operational problems inside a company:
 
-- start from a real operational problem  
-- identify the repeating pattern  
-- simplify the workflow  
-- organize the information  
-- build an internal tool adapted to the team  
+- identify where information gets lost in the workflow
+- map the recurring bottlenecks
+- simplify the process before building anything
+- build a tool around the real workflow, not around a generic template
 
-The objective is to demonstrate operational thinking, not to sell software.
-
----
-
-## Core operational logic
-
-### Before
-- Excel + WhatsApp + calls  
-- fragmented project tracking  
-- manual follow-up  
-- reactive decisions  
-- difficult overview for management  
-
-### After
-- clear pipeline from lead to installation  
-- structured project follow-up  
-- visible delays and blocked steps  
-- simplified quote generation  
-- better internal visibility for next actions  
+The objective is to demonstrate operational thinking. Not to sell software.
 
 ---
 
-## Main features
+## Before / After
 
-### 1. Dashboard in under 30 seconds
-Quick overview of:
-- total pipeline  
-- estimated pipeline value  
-- CREOS alerts  
-- projects without contact  
-- current project stages  
-
-### 2. Quote generation in minutes
-- real-time calculations  
-- indicative Klimabonus 2026 logic  
-- professional PDF output  
-- indicative price range instead of rigid fixed price  
-
-### 3. Kanban pipeline
-Clear internal flow:
-
-**Lead → Visit → Quote → CREOS → Installation → Done**
-
-This makes project status visible without searching across messages or files.
-
-### 4. Alert system
-Built to highlight common delays:
-- CREOS pending for too long  
-- quote sent but no movement  
-- project without contact for several days  
-
-### 5. Project detail page
-Each project includes:
-- current status  
-- notes  
-- next action  
-- visit scheduling  
-- WhatsApp templates  
-- internal follow-up structure  
-
-### 6. Installation checklist
-Per-project checklist with 3 phases:
-- before installation  
-- installation day  
-- after installation  
-
-Saved locally for quick demo usage.
+| Before | After |
+|--------|-------|
+| Excel + WhatsApp + paper | Single pipeline visible to the whole team |
+| CREOS delays discovered too late | Automatic alerts after 21 days |
+| Quote sent — then silence | Follow-up alert after 14 days without response |
+| "Who is at which site today?" | Terrain dispatch view per technician |
+| No contact history | Every action logged with timestamp |
+| Quote calculated manually | Quote + Klimabonus PDF in 5 minutes |
 
 ---
 
-## Example of the problem this demo addresses
+## What the demo includes
 
-A quote is sent.  
-The client waits.  
-CREOS status is unclear.  
-Sales thinks admin is following.  
-Admin thinks sales already called.  
-Installation has no clear visibility on timing.
+### Dashboard — 30 seconds to see everything
 
-Nothing is fully broken, but the company loses time because the process is not structured.
+Total pipeline, estimated value, active CREOS files, projects without recent contact, stage breakdown. No scrolling, no searching.
+
+### Quote generation in 5 minutes
+
+Fill in roof area, consumption profile and client name. The system calculates kWp, Klimabonus 2026 subsidy, indicative net cost and payback period. Generates a professional PDF ready to send.
+
+Solves the problem of quotes made by hand in Word, with calculation errors, that take 2 days to prepare.
+
+### Kanban pipeline
+
+Lead → Visite → Devis → CREOS → Installation → Raccordement → Terminé
+
+Every project has a stage, an owner, a due date and a next action. Nothing gets lost between steps.
+
+### Automatic alerts
+
+The system flags three patterns that cost money when missed:
+- CREOS file pending for more than 21 days
+- Quote sent more than 14 days ago with no movement
+- Project without any contact for more than 7 days
+
+### WhatsApp follow-up in one click
+
+Each project has ready-made message templates: quote follow-up, CREOS update, installation confirmation. Click, preview the message, send. The event is logged in the project history.
+
+Solves the problem of inconsistent follow-up between sales reps and contact history lost in someone's personal phone.
+
+### Terrain dispatch board
+
+The office sees, in real time: which technician is assigned to which site, the address, client, kWp, status of the work, and days on site. Unassigned active projects are flagged immediately.
+
+Solves the problem of calling each technician every morning to ask where they are and what they have for the day.
+
+### Project history
+
+Every status change, note, contact logged, or WhatsApp sent is recorded with a timestamp. The full activity trail is visible inside each project.
+
+Solves the question "who said what to the client and when" — which creates internal conflicts and loses deals when the answer doesn't exist.
+
+### Installation checklist
+
+Structured per project across three phases: before, during and after installation. Progress is visible and persistent.
+
+Solves the problem of steps forgotten mid-installation, or incomplete handovers where nobody is sure if the final documentation was given to the client.
+
+---
+
+## A concrete example of the problem
+
+A quote is sent on a Monday.
+The client needs a few days to think.
+CREOS status is unclear.
+Sales thinks admin is following up.
+Admin thinks sales already called.
+Installation has no visibility on timing.
+
+Nothing is fully broken — but the company loses time every week because the flow is not structured.
 
 This demo shows one way to reduce that noise.
 
 ---
 
-## Approach
+## Who this is for
 
-My logic is always the same:
+This type of tool is relevant for solar installation companies of 3 to 30 people that:
 
-1. observe the real workflow  
-2. identify where information gets lost  
-3. map the repeated bottlenecks  
-4. simplify the process  
-5. build a tool around the workflow, not around technology  
+- Already have enough pipeline to lose track without a system
+- Want to professionalize client follow-up without hiring more administrative staff
+- Are growing and need the whole team to share the same operational picture
+
+No technical training required. Any sales rep, technician or manager can use it from day one.
 
 ---
 
-## O que esta consola resolve
-
-### Requirements
-- Node.js 18+  
-- npm  
-
-### Run locally
+## Run locally
 
 ```bash
 git clone https://github.com/Hugomelo123/demosolar.git
 cd demosolar
 npm install
 npm run dev:client
+```
+
+Open **http://localhost:5002** — dashboard, pipeline and quote tool visible in under 30 seconds.
+
+---
+
+## About
+
+**Hugo Melo** — operations and project coordination, focused on the Luxembourg solar sector.
+
+I built this demo to show that I understand the real operational problems of an installation company — not just the technology, but the day-to-day reality of sales, CREOS, field teams and client follow-up.
+
+Available for operations management, commercial coordination, or digital transformation roles in the solar sector.
+
+- GitHub: [github.com/Hugomelo123](https://github.com/Hugomelo123)
+- LinkedIn: [linkedin.com/in/hugomelo123](https://www.linkedin.com/in/hugomelo123)
+
+---
+
+## Technical note
+
+The demo runs entirely in the browser with no server or database required. Data is stored locally.
+
+For a real team deployment, the architecture is prepared for database connection and multi-user authentication — not implemented here because the goal of this version is to demonstrate the operations, not the infrastructure.
+
+> Stack: React 19, TypeScript, Express, Tailwind CSS, pdf-lib. Tests: Vitest.
